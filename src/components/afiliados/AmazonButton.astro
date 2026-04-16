@@ -1,0 +1,48 @@
+---
+export interface Props {
+  url: string;
+  label?: string;
+  asin?: string;
+  variant?: 'primary' | 'secondary';
+  source?: string;
+}
+
+const { url, label = 'Ver precio en Amazon', asin, variant = 'primary', source = 'cta_inline' } = Astro.props;
+
+const partnerTag = import.meta.env.AMAZON_PARTNER_TAG || '{{AMAZON_TAG}}';
+
+function buildUrl(raw: string): string {
+  try {
+    const u = new URL(raw);
+    u.searchParams.set('tag', partnerTag);
+    return u.toString();
+  } catch {
+    if (asin) return `https://www.amazon.es/dp/${asin}?tag=${partnerTag}`;
+    return raw;
+  }
+}
+
+const href = buildUrl(url);
+
+const base =
+  'inline-flex items-center justify-center gap-2 rounded-lg px-5 py-3 font-semibold transition shadow-sm hover:shadow-md';
+const variants = {
+  primary: 'bg-[#ff9900] hover:bg-[#e88b00] text-black',
+  secondary: 'bg-gray-900 hover:bg-gray-800 text-white',
+};
+---
+
+<a
+  href={href}
+  target="_blank"
+  rel="sponsored nofollow noopener noreferrer"
+  class={`${base} ${variants[variant]}`}
+  data-asin={asin}
+  data-amazon-click
+  data-amazon-source={source}
+>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
+    <path d="M14.7 14.8c-2.1 1.6-5.2 2.4-7.9 2.4-3.7 0-7.1-1.4-9.6-3.7-.2-.2 0-.5.2-.3 2.7 1.6 6.1 2.5 9.6 2.5 2.4 0 5-.5 7.4-1.5.4-.2.7.3.3.6z" transform="translate(5,2)"/>
+  </svg>
+  <span>{label}</span>
+</a>

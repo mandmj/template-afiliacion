@@ -1,0 +1,45 @@
+---
+// Envía un evento personalizado a Vercel Web Analytics cada vez que el usuario
+// hace clic en un enlace afiliado (todo <a> con data-amazon-click).
+// Se inyecta una sola vez por página desde el Layout.
+---
+
+<script is:inline>
+  (function () {
+    function init() {
+      document.querySelectorAll('a[data-amazon-click]').forEach(function (link) {
+        if (link.dataset.awTracked === '1') return;
+        link.dataset.awTracked = '1';
+        link.addEventListener('click', function () {
+          var asin = link.getAttribute('data-asin') || 'unknown';
+          var source = link.getAttribute('data-amazon-source') || 'unknown';
+          var pagePath = window.location.pathname;
+          try {
+            if (typeof window.va === 'function') {
+              window.va('event', {
+                name: 'amazon_click',
+                data: { asin: asin, source: source, page: pagePath },
+              });
+            }
+          } catch (e) {}
+          try {
+            if (typeof window.gtag === 'function') {
+              window.gtag('event', 'amazon_click', {
+                asin: asin,
+                source: source,
+                page_path: pagePath,
+                link_url: link.href,
+              });
+            }
+          } catch (e) {}
+        });
+      });
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+    document.addEventListener('astro:page-load', init);
+  })();
+</script>

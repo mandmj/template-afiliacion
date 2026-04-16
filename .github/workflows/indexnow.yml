@@ -1,0 +1,34 @@
+name: Notificar IndexNow
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/content/**'
+      - 'src/pages/**'
+      - 'src/data/products/**'
+      - 'src/navigation.ts'
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout (sin código, solo metadatos)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Esperar deploy de Vercel (60s)
+        # Le damos tiempo a Vercel a que rebuilde y sirva el sitemap actualizado
+        run: sleep 60
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Ping IndexNow
+        run: node scripts/indexnow-ping.mjs

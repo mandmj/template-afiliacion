@@ -1,0 +1,42 @@
+---
+import Layout from '~/layouts/Layout.astro';
+
+const metadata = {
+  title: '404 — página no encontrada',
+  robots: { index: false, follow: true },
+};
+---
+
+<Layout metadata={metadata}>
+  <section class="min-h-[60vh] flex items-center p-8">
+    <div class="mx-auto max-w-2xl text-center">
+      <p class="font-heading text-8xl font-bold text-lime-500 tabular-nums">404</p>
+      <h1 class="mt-6 font-heading text-3xl sm:text-4xl font-bold">
+        Esta página no existe
+      </h1>
+      <p class="mt-4 text-lg text-slate-600 dark:text-slate-400">
+        El enlace que seguías ya no existe o lo hemos movido. Prueba a explorar las
+        secciones principales:
+      </p>
+
+      <div class="mt-8 grid gap-3 sm:grid-cols-2 text-left">
+        <a href="/reviews" class="rounded-lg border border-slate-200 dark:border-slate-700 p-4 hover:border-lime-400 transition">
+          <p class="font-heading font-bold">📋 Reviews</p>
+          <p class="text-sm text-slate-600 dark:text-slate-400">Análisis de los {{PRODUCTO_PLURAL}} más vendidos de Amazon España.</p>
+        </a>
+        <a href="/comparativas" class="rounded-lg border border-lime-400 bg-lime-50 dark:bg-lime-950/30 p-4 hover:bg-lime-100 dark:hover:bg-lime-950/50 transition">
+          <p class="font-heading font-bold">🏆 Comparativa 2026</p>
+          <p class="text-sm text-slate-600 dark:text-slate-400">Los 5 mejores modelos cara a cara.</p>
+        </a>
+        <a href="/guia-de-compra" class="rounded-lg border border-slate-200 dark:border-slate-700 p-4 hover:border-lime-400 transition">
+          <p class="font-heading font-bold">📖 Guía de compra</p>
+          <p class="text-sm text-slate-600 dark:text-slate-400">Qué mirar antes de elegir.</p>
+        </a>
+        <a href="/" class="rounded-lg border border-slate-200 dark:border-slate-700 p-4 hover:border-lime-400 transition">
+          <p class="font-heading font-bold">🏠 Inicio</p>
+          <p class="text-sm text-slate-600 dark:text-slate-400">Volver a la página principal.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+</Layout>

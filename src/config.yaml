@@ -1,0 +1,72 @@
+site:
+  name: '{{SITE_NAME}}'
+  site: 'https://{{DOMAIN}}'
+  base: '/'
+  trailingSlash: false
+
+  googleSiteVerificationId: ''
+
+# Default SEO metadata
+metadata:
+  title:
+    default: '{{SITE_NAME}} — {{TAGLINE}}'
+    template: '%s — {{SITE_NAME}}'
+  description: '{{META_DESCRIPTION}}'
+  robots:
+    index: true
+    follow: true
+  openGraph:
+    site_name: '{{SITE_NAME}}'
+    images:
+      - url: '~/assets/images/default.png'
+        width: 1200
+        height: 628
+    type: website
+  twitter:
+    handle: ''
+    site: ''
+    cardType: summary_large_image
+
+i18n:
+  language: es
+  textDirection: ltr
+
+apps:
+  blog:
+    isEnabled: false
+    postsPerPage: 9
+
+    post:
+      isEnabled: true
+      permalink: '/%slug%'
+      robots:
+        index: true
+
+    list:
+      isEnabled: true
+      pathname: 'blog'
+      robots:
+        index: true
+
+    category:
+      isEnabled: true
+      pathname: 'categoria'
+      robots:
+        index: true
+
+    tag:
+      isEnabled: true
+      pathname: 'etiqueta'
+      robots:
+        index: false
+
+    isRelatedPostsEnabled: true
+    relatedPostsCount: 4
+
+analytics:
+  vendors:
+    googleAnalytics:
+      id: null # Rellenar con G-XXXXXXXXXX tras crear propiedad GA4
+
+ui:
+  theme: 'system'

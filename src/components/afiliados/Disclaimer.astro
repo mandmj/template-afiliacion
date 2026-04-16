@@ -1,0 +1,18 @@
+---
+export interface Props {
+  compact?: boolean;
+}
+const { compact = false } = Astro.props;
+---
+
+<aside
+  class={`rounded-md border border-amber-300 bg-amber-50 text-amber-900 dark:bg-amber-950/40 dark:text-amber-100 ${
+    compact ? 'p-3 text-xs' : 'p-4 text-sm'
+  }`}
+  role="note"
+>
+  <strong>Aviso de afiliación:</strong> Como Afiliado de Amazon, obtengo ingresos por las compras
+  adscritas que cumplen los requisitos aplicables. Los precios y la disponibilidad pueden variar
+  respecto a los mostrados; la información válida es la que aparece en Amazon en el momento de la
+  compra.
+</aside>

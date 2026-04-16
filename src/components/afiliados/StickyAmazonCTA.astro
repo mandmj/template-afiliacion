@@ -1,0 +1,67 @@
+---
+export interface Props {
+  url: string;
+  asin: string;
+  title: string;
+  price?: number;
+  currency?: string;
+}
+
+const { url, asin, title, price, currency = 'EUR' } = Astro.props;
+const partnerTag = import.meta.env.AMAZON_PARTNER_TAG || '{{AMAZON_TAG}}';
+
+let href = url;
+try {
+  const u = new URL(url);
+  u.searchParams.set('tag', partnerTag);
+  href = u.toString();
+} catch {
+  href = `https://www.amazon.es/dp/${asin}?tag=${partnerTag}`;
+}
+
+const priceFormatted =
+  typeof price === 'number'
+    ? new Intl.NumberFormat('es-ES', { style: 'currency', currency }).format(price)
+    : null;
+---
+
+<div
+  id="sticky-cta"
+  class="fixed bottom-0 inset-x-0 z-40 translate-y-full opacity-0 transition-all duration-300 bg-white/95 dark:bg-slate-900/95 backdrop-blur border-t border-slate-200 dark:border-slate-700 shadow-lg"
+>
+  <div class="mx-auto max-w-5xl px-4 py-3 flex items-center gap-4">
+    <div class="flex-1 min-w-0">
+      <p class="truncate font-heading font-semibold text-sm">{title}</p>
+      {priceFormatted && (
+        <p class="text-xs text-slate-500 tabular-nums">Precio actualizado: <span class="font-bold text-slate-900 dark:text-white">{priceFormatted}</span></p>
+      )}
+    </div>
+    <a
+      href={href}
+      target="_blank"
+      rel="sponsored nofollow noopener noreferrer"
+      data-asin={asin}
+      class="inline-flex items-center justify-center gap-2 rounded-lg bg-[#ff9900] hover:bg-[#e88b00] text-black px-4 py-2 font-semibold whitespace-nowrap shadow-sm transition"
+      data-amazon-click
+      data-amazon-source="sticky_cta"
+    >
+      Ver en Amazon →
+    </a>
+  </div>
+</div>
+
+<script>
+  function initStickyCTA() {
+    const el = document.getElementById('sticky-cta');
+    if (!el) return;
+    const onScroll = () => {
+      const show = window.scrollY > window.innerHeight * 0.6;
+      el.style.transform = show ? 'translateY(0)' : 'translateY(100%)';
+      el.style.opacity = show ? '1' : '0';
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  }
+  initStickyCTA();
+  document.addEventListener('astro:page-load', initStickyCTA);
+</script>

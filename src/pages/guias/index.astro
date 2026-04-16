@@ -1,0 +1,55 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '~/layouts/PageLayout.astro';
+import Breadcrumb from '~/components/content/Breadcrumb.astro';
+
+const metadata = {
+  title: 'Guías de patinetes eléctricos',
+  description:
+    'Guías prácticas sobre patinetes eléctricos: mantenimiento, batería, normativa DGT, seguros y consejos para sacar el máximo partido a tu patinete.',
+};
+
+const guides = (await getCollection('guides'))
+  .filter((g) => !g.data.draft)
+  .sort((a, b) => new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime());
+---
+
+<Layout metadata={metadata}>
+  <section class="mx-auto max-w-6xl px-4 py-12">
+    <Breadcrumb items={[{ label: 'Inicio', href: '/' }, { label: 'Guías' }]} />
+
+    <header class="mb-10">
+      <p class="text-sm uppercase tracking-wider text-lime-600 dark:text-lime-400 font-semibold">Guías</p>
+      <h1 class="font-heading text-3xl sm:text-4xl font-bold mt-2">
+        Guías de patinetes eléctricos
+      </h1>
+      <p class="mt-4 text-lg text-slate-600 dark:text-slate-400 max-w-3xl">
+        Todo lo que necesitas saber más allá de qué modelo comprar: mantenimiento,
+        normativa DGT, seguros obligatorios por ciudades, cuidado de la batería en
+        invierno y recomendaciones según edad.
+      </p>
+    </header>
+
+    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {guides.map((g) => (
+        <a
+          href={`/guias/${g.id}`}
+          class="group block rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 hover:-translate-y-1 hover:shadow-lg hover:border-lime-400 transition"
+        >
+          <p class="text-xs uppercase tracking-wider text-lime-600 dark:text-lime-400 font-semibold">
+            {g.data.category}
+          </p>
+          <h2 class="font-heading text-lg font-bold mt-2 group-hover:text-lime-600 dark:group-hover:text-lime-400">
+            {g.data.title}
+          </h2>
+          <p class="mt-3 text-sm text-slate-600 dark:text-slate-400">{g.data.excerpt}</p>
+          <p class="mt-4 text-sm font-semibold text-lime-700 dark:text-lime-400">Leer guía →</p>
+        </a>
+      ))}
+    </div>
+
+    {guides.length === 0 && (
+      <p class="text-slate-600 dark:text-slate-400">Próximamente nuevas guías.</p>
+    )}
+  </section>
+</Layout>

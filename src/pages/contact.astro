@@ -1,0 +1,53 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import HeroText from '~/components/widgets/HeroText.astro';
+import Features2 from '~/components/widgets/Features2.astro';
+
+const metadata = {
+  title: 'Contacto',
+  description:
+    'Escríbenos para consultas, sugerencias o correcciones sobre nuestras reviews.',
+};
+---
+
+<Layout metadata={metadata}>
+  <HeroText tagline="Contacto" title="¿Hablamos?" />
+
+  <section class="mx-auto max-w-3xl px-4 py-12 prose dark:prose-invert">
+    <p class="text-lg">
+      La forma más rápida de contactarnos es por email. Respondemos en 24-48 h
+      laborables.
+    </p>
+
+    <p>
+      📧 <strong>Email</strong>: <a href="mailto:{{EMAIL}}">{{EMAIL}}</a>
+    </p>
+
+    <p>
+      Si has detectado un <strong>dato incorrecto</strong> en alguna review
+      (precio desactualizado, error en especificaciones, enlace roto), indícanos
+      la URL y la corrección concreta.
+    </p>
+  </section>
+
+  <Features2
+    title="En qué podemos ayudarte"
+    items={[
+      {
+        title: 'Sugerencias de modelos',
+        description:
+          '¿Quieres que analicemos un patinete que no está en la web? Cuéntanos el modelo y lo añadiremos a nuestra cola.',
+      },
+      {
+        title: 'Correcciones',
+        description:
+          'Si ves un error en precio o especificaciones, avísanos con la URL y lo corregimos lo antes posible.',
+      },
+      {
+        title: 'Colaboraciones',
+        description:
+          'Marcas y fabricantes: contacta para propuestas editoriales. Conservamos siempre independencia editorial.',
+      },
+    ]}
+  />
+</Layout>

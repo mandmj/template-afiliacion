@@ -1,0 +1,31 @@
+# Bots generales
+User-agent: *
+Disallow:
+
+# OpenAI — ChatGPT Search y acceso bajo demanda de usuarios
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+# OpenAI — GPTBot (entrenamiento de futuros modelos).
+# Allow significa que nuestro contenido puede aparecer en respuestas de ChatGPT gratuitas.
+# Si no quieres que lo use para entrenar, cambia Allow por Disallow.
+User-agent: GPTBot
+Allow: /
+
+# Perplexity — aparece en resultados de Perplexity AI
+User-agent: PerplexityBot
+Allow: /
+
+# Anthropic Claude — para que respuestas de Claude puedan citarnos
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+# Google Extended (control separado de AI Overviews)
+User-agent: Google-Extended
+Allow: /

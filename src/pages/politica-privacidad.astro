@@ -1,0 +1,57 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+
+const metadata = {
+  title: 'Política de privacidad',
+  robots: { index: true, follow: false },
+};
+---
+
+<Layout metadata={metadata}>
+  <section class="mx-auto max-w-3xl px-4 py-12 prose dark:prose-invert">
+    <h1>Política de privacidad</h1>
+
+    <p>
+      De conformidad con el Reglamento (UE) 2016/679 (RGPD) y la Ley Orgánica 3/2018 de Protección
+      de Datos Personales y garantía de los derechos digitales (LOPDGDD), se informa sobre el
+      tratamiento de los datos personales.
+    </p>
+
+    <h2>Responsable del tratamiento</h2>
+    <p>
+      Titular: <strong>{{AUTOR}}</strong> — NIF <strong>{{NIF}}</strong><br />
+      Domicilio: {{DOMICILIO}}<br />
+      Contacto: <a href="mailto:{{EMAIL}}">{{EMAIL}}</a>
+    </p>
+
+    <h2>Finalidad</h2>
+    <p>
+      Los datos que nos facilites a través del formulario de contacto se utilizan únicamente para
+      atender tu consulta. En caso de suscripción a la newsletter, se utilizarán para enviarte
+      información sobre novedades y ofertas relacionadas con patinetes eléctricos.
+    </p>
+
+    <h2>Legitimación</h2>
+    <p>Consentimiento del interesado otorgado al remitir el formulario o aceptar la suscripción.</p>
+
+    <h2>Destinatarios</h2>
+    <p>
+      No se cederán datos a terceros salvo obligación legal. Los datos se alojan en servidores
+      dentro de la UE (Vercel / Netlify / Cloudflare) o en proveedores que cumplen cláusulas
+      contractuales tipo de la Comisión Europea.
+    </p>
+
+    <h2>Derechos</h2>
+    <p>
+      Puedes ejercer tus derechos de acceso, rectificación, supresión, oposición, limitación y
+      portabilidad escribiendo a <a href="mailto:{{EMAIL}}">{{EMAIL}}</a>. Igualmente
+      puedes presentar una reclamación ante la Agencia Española de Protección de Datos (www.aepd.es).
+    </p>
+
+    <h2>Enlaces externos</h2>
+    <p>
+      Este sitio contiene enlaces de afiliación a Amazon.es. Al hacer clic, Amazon aplicará su
+      propia política de privacidad y cookies, ajena a este sitio.
+    </p>
+  </section>
+</Layout>

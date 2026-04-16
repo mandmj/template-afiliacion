@@ -1,0 +1,109 @@
+---
+import { buildAwinUrl } from '~/lib/awin';
+
+export interface Retailer {
+  name: string;
+  merchantId?: string;
+  network?: 'amazon' | 'awin' | 'direct';
+  price?: number;
+  url: string;
+  inStock?: boolean;
+}
+
+export interface Props {
+  asin: string;
+  amazonUrl: string;
+  amazonPrice?: number;
+  retailers?: Retailer[];
+  clickRef?: string;
+}
+
+const { asin, amazonUrl, amazonPrice, retailers = [], clickRef } = Astro.props;
+
+const amazonTag = import.meta.env.AMAZON_PARTNER_TAG || '{{AMAZON_TAG}}';
+
+function withAmazonTag(url: string): string {
+  try {
+    const u = new URL(url);
+    u.searchParams.set('tag', amazonTag);
+    return u.toString();
+  } catch {
+    return `https://www.amazon.es/dp/${asin}?tag=${amazonTag}`;
+  }
+}
+
+function resolveUrl(r: Retailer): string {
+  if (r.network === 'awin' && r.merchantId) {
+    return buildAwinUrl({ merchantId: r.merchantId, targetUrl: r.url, clickRef });
+  }
+  return r.url;
+}
+
+const eur = (v?: number) =>
+  typeof v === 'number'
+    ? new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR', maximumFractionDigits: 2 }).format(v)
+    : null;
+
+// Amazon primero, resto ordenado por precio ascendente (los que tengan precio arriba)
+const otherOffers = retailers
+  .filter((r) => r.name.toLowerCase() !== 'amazon')
+  .sort((a, b) => (a.price ?? 999999) - (b.price ?? 999999));
+---
+
+<section class="not-prose my-8 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden">
+  <div class="px-5 py-3 bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
+    <h3 class="font-heading font-bold text-sm uppercase tracking-wider text-slate-700 dark:text-slate-300">
+      🛒 Dónde comprarlo
+    </h3>
+  </div>
+
+  <ul class="divide-y divide-slate-200 dark:divide-slate-700">
+    {/* Amazon: no mostrar precio (política del programa) */}
+    <li class="flex items-center gap-4 px-5 py-4">
+      <span class="font-heading font-bold flex-1">Amazon</span>
+      <span class="text-xs text-slate-500">Envío rápido · Devolución 30 días</span>
+      <a
+        href={withAmazonTag(amazonUrl)}
+        target="_blank"
+        rel="sponsored nofollow noopener noreferrer"
+        data-asin={asin}
+        data-amazon-click
+        data-amazon-source="retailer_list"
+        class="inline-flex items-center gap-1 rounded-md bg-[#ff9900] hover:bg-[#e88b00] text-black px-4 py-2 text-sm font-bold whitespace-nowrap transition"
+      >
+        Ver precio →
+      </a>
+    </li>
+
+    {/* Resto de vendedores: sí mostramos precio */}
+    {otherOffers.map((r) => (
+      <li class="flex items-center gap-4 px-5 py-4">
+        <span class="font-heading font-bold flex-1">{r.name}</span>
+        <span class="tabular-nums font-bold text-slate-900 dark:text-white">
+          {r.price !== undefined ? eur(r.price) : '—'}
+        </span>
+        {r.inStock === false ? (
+          <span class="text-xs px-2 py-1 rounded bg-rose-100 text-rose-700 dark:bg-rose-900/50 dark:text-rose-200">
+            Agotado
+          </span>
+        ) : null}
+        <a
+          href={resolveUrl(r)}
+          target="_blank"
+          rel="sponsored nofollow noopener noreferrer"
+          data-amazon-click
+          data-amazon-source={`retailer_${r.name.toLowerCase().replace(/\s+/g, '_')}`}
+          class="inline-flex items-center gap-1 rounded-md border-2 border-slate-900 dark:border-lime-400 hover:bg-slate-900 hover:text-white dark:hover:bg-lime-500 dark:hover:text-black px-4 py-2 text-sm font-bold whitespace-nowrap transition"
+        >
+          Ver →
+        </a>
+      </li>
+    ))}
+  </ul>
+
+  {otherOffers.length === 0 && (
+    <p class="px-5 pb-4 text-xs text-slate-500">
+      Buscamos otras tiendas que vendan este modelo con buenas condiciones. Vuelve pronto.
+    </p>
+  )}
+</section>

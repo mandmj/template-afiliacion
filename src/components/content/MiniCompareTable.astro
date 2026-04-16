@@ -1,0 +1,87 @@
+---
+import { getCollection } from 'astro:content';
+
+export interface Props {
+  currentSlug: string;
+  limit?: number;
+}
+
+const { currentSlug, limit = 5 } = Astro.props;
+
+const all = (await getCollection('reviews'))
+  .filter((r) => !r.data.draft)
+  .sort((a, b) => (b.data.rating ?? 0) - (a.data.rating ?? 0));
+
+const current = all.find((r) => r.id === currentSlug);
+const others = all.filter((r) => r.id !== currentSlug).slice(0, limit - 1);
+const rows = current ? [current, ...others] : others;
+
+const partnerTag = import.meta.env.AMAZON_PARTNER_TAG || '{{AMAZON_TAG}}';
+
+function affiliateUrl(url: string, asin: string) {
+  try {
+    const u = new URL(url);
+    u.searchParams.set('tag', partnerTag);
+    return u.toString();
+  } catch {
+    return `https://www.amazon.es/dp/${asin}?tag=${partnerTag}`;
+  }
+}
+
+const eur = (v?: number) =>
+  typeof v === 'number'
+    ? new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(v)
+    : '—';
+---
+
+<section class="not-prose mt-16">
+  <h2 class="font-heading text-2xl font-bold mb-2">Compáralo con otros modelos</h2>
+  <p class="text-sm text-slate-600 dark:text-slate-400 mb-5">
+    Nuestras 5 reviews con mejor puntuación. El modelo de esta página está destacado en lima.
+  </p>
+
+  <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700">
+    <table class="w-full text-sm">
+      <thead class="bg-slate-50 dark:bg-slate-800 text-left">
+        <tr>
+          <th class="px-4 py-3 font-heading font-semibold">Modelo</th>
+          <th class="px-4 py-3 font-heading font-semibold">Nota</th>
+          <th class="px-4 py-3 font-heading font-semibold text-right">Precio</th>
+          <th class="px-4 py-3 font-heading font-semibold text-right">Amazon</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
+        {rows.map((r) => {
+          const isCurrent = r.id === currentSlug;
+          return (
+            <tr class={isCurrent ? 'bg-lime-50 dark:bg-lime-950/30' : ''}>
+              <td class="px-4 py-3">
+                <a href={`/reviews/${r.id}`} class="font-semibold hover:text-lime-700 dark:hover:text-lime-400">
+                  {r.data.product.brand ? r.data.product.brand + ' · ' : ''}{r.data.product.title.split(/[-,]/)[0].trim().slice(0, 50)}
+                </a>
+                {isCurrent && <span class="ml-2 text-xs px-1.5 py-0.5 rounded bg-lime-500 text-black font-bold">ESTE</span>}
+              </td>
+              <td class="px-4 py-3 tabular-nums font-bold">
+                {r.data.rating.toFixed(1)}<span class="text-slate-400 text-xs">/10</span>
+              </td>
+              <td class="px-4 py-3 text-right tabular-nums font-semibold">{eur(r.data.product.price)}</td>
+              <td class="px-4 py-3 text-right">
+                <a
+                  href={affiliateUrl(r.data.product.url, r.data.product.asin)}
+                  target="_blank"
+                  rel="sponsored nofollow noopener noreferrer"
+                  data-asin={r.data.product.asin}
+                  data-amazon-click
+                  data-amazon-source={isCurrent ? 'compare_table_current' : 'compare_table_other'}
+                  class="inline-flex items-center gap-1 rounded-md bg-[#ff9900] hover:bg-[#e88b00] text-black px-3 py-1.5 font-semibold whitespace-nowrap transition"
+                >
+                  Ver →
+                </a>
+              </td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+  </div>
+</section>

@@ -1,0 +1,91 @@
+---
+import AmazonButton from './AmazonButton.astro';
+import ScoreBadge from './ScoreBadge.astro';
+
+export interface Props {
+  asin: string;
+  title: string;
+  image?: string;
+  price?: number;
+  currency?: string;
+  rating?: number;
+  reviewsCount?: number;
+  url: string;
+  features?: string[];
+  highlighted?: boolean;
+  score?: number;
+}
+
+const {
+  asin,
+  title,
+  image,
+  price,
+  currency = 'EUR',
+  rating,
+  reviewsCount,
+  url,
+  features = [],
+  highlighted = false,
+  score,
+} = Astro.props;
+
+const priceFormatted =
+  typeof price === 'number'
+    ? new Intl.NumberFormat('es-ES', { style: 'currency', currency }).format(price)
+    : null;
+
+const stars = rating ? Math.round(rating * 10) / 10 : null;
+---
+
+<article
+  class={`group relative flex flex-col rounded-2xl border p-5 bg-white dark:bg-slate-900 transition-all duration-200 hover:-translate-y-1 hover:shadow-xl ${
+    highlighted
+      ? 'border-lime-500 ring-2 ring-lime-400'
+      : 'border-slate-200 dark:border-slate-700 hover:border-lime-400'
+  }`}
+>
+  {score !== undefined && (
+    <div class="absolute -top-3 -right-3 z-10">
+      <ScoreBadge score={score} size="sm" />
+    </div>
+  )}
+
+  {image && (
+    <div class="flex justify-center mb-4 overflow-hidden rounded-lg bg-slate-50 dark:bg-slate-800 p-2">
+      <img
+        src={image}
+        alt={title}
+        loading="lazy"
+        class="h-48 object-contain transition-transform duration-300 group-hover:scale-105"
+      />
+    </div>
+  )}
+
+  <h3 class="font-heading text-lg font-bold leading-tight mb-2">{title}</h3>
+
+  {stars !== null && (
+    <div class="flex items-center gap-1 text-sm mb-2">
+      <span class="text-amber-500" aria-label={`${stars} de 5`}>★ <span class="tabular-nums">{stars}</span></span>
+      {reviewsCount !== undefined && (
+        <span class="text-slate-500 tabular-nums">({reviewsCount.toLocaleString('es-ES')} reseñas)</span>
+      )}
+    </div>
+  )}
+
+  {features.length > 0 && (
+    <ul class="text-sm space-y-1 mb-4 text-slate-700 dark:text-slate-300">
+      {features.slice(0, 4).map((f) => <li>✓ {f}</li>)}
+    </ul>
+  )}
+
+  {priceFormatted && (
+    <div class="font-heading text-2xl font-bold text-slate-900 dark:text-white mb-4 tabular-nums" data-price>
+      {priceFormatted}
+    </div>
+  )}
+
+  <div class="mt-auto">
+    <AmazonButton url={url} asin={asin} />
+  </div>
+</article>

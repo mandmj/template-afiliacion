@@ -1,0 +1,126 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import Breadcrumb from '~/components/content/Breadcrumb.astro';
+
+const metadata = {
+  title: 'Sobre nosotros — {{SITE_NAME}}',
+  description:
+    '{{AUTOR}}, autor de {{SITE_NAME}}. Análisis independientes basados en datos reales de Amazon España y experiencia personal con movilidad urbana.',
+};
+
+const authorJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: '{{AUTOR}}',
+  url: 'https://{{DOMAIN}}/about',
+  jobTitle: 'Editor y analista de movilidad urbana',
+  nationality: 'ES',
+  worksFor: {
+    '@type': 'Organization',
+    name: '{{SITE_NAME}}',
+    url: 'https://{{DOMAIN}}',
+  },
+  knowsAbout: [
+    'Patinetes eléctricos',
+    'Movilidad urbana sostenible',
+    'Normativa DGT VMP',
+    'Análisis de producto',
+  ],
+  sameAs: [],
+};
+---
+
+<Layout metadata={metadata}>
+  <section class="mx-auto max-w-4xl px-4 py-12">
+    <Breadcrumb items={[{ label: 'Inicio', href: '/' }, { label: 'Sobre nosotros' }]} />
+  </section>
+
+  <Hero>
+    <Fragment slot="title">Reviews honestas, sin humo</Fragment>
+    <Fragment slot="subtitle">
+      Creamos {{SITE_NAME}} porque estábamos cansados de webs que copiaban la ficha
+      técnica de Amazon sin aportar criterio. Aquí analizamos cada modelo con datos reales y
+      experiencia de uso, y te decimos con claridad si merece la pena.
+    </Fragment>
+  </Hero>
+
+  <section class="mx-auto max-w-3xl px-4 py-12 prose dark:prose-invert prose-lime">
+    <h2>Quién firma esto</h2>
+
+    <div class="not-prose flex items-start gap-5 my-8 p-6 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
+      <div class="shrink-0 w-20 h-20 rounded-full bg-lime-400 flex items-center justify-center font-heading text-3xl font-bold text-black">
+        MMJ
+      </div>
+      <div>
+        <p class="font-heading text-lg font-bold">{{AUTOR}}</p>
+        <p class="text-sm text-slate-600 dark:text-slate-400">
+          Editor de {{SITE_NAME}} · Madrid, España · NIF {{NIF}}
+        </p>
+        <p class="text-sm mt-2 text-slate-700 dark:text-slate-300">
+          Experiencia personal usando {{PRODUCTO_PLURAL}} a diario. [Personaliza con años, ciudad, experiencia real].
+          He probado personalmente 6 modelos de las principales marcas (Xiaomi, Segway, Cecotec,
+          smartGyro, ZWHEEL) en rutas urbanas, pendientes del barrio de Aluche y trayectos
+          interurbanos.
+        </p>
+      </div>
+    </div>
+
+    <h2>Cómo trabajamos</h2>
+    <p>
+      Cada review parte de los <strong>datos oficiales del fabricante y de Amazon España</strong>,
+      se contrasta con la experiencia real de los usuarios que dejan reseñas (mínimo 50 opiniones
+      cuando es posible), y se enriquece con pruebas de uso propias cuando el modelo está en
+      nuestra flota.
+    </p>
+    <p>
+      Nunca publicamos una review sin:
+    </p>
+    <ul>
+      <li>Confirmar el <strong>certificado DGT</strong> vigente del modelo.</li>
+      <li>Verificar el <strong>precio actualizado</strong> en Amazon en las 48 h previas.</li>
+      <li>Hacer una <strong>sección honesta de contras</strong> con al menos 3 puntos débiles reales.</li>
+      <li>Comparar con al menos <strong>dos alternativas de precio similar</strong>.</li>
+    </ul>
+
+    <h2>Qué NO hacemos</h2>
+    <ul>
+      <li>Aceptar productos gratis a cambio de reviews positivas.</li>
+      <li>Reviews patrocinadas disfrazadas de análisis independientes.</li>
+      <li>Publicar contenido genérico generado sin criterio editorial.</li>
+      <li>Recomendar un modelo popular cuando sabemos que hay otro mejor por el mismo precio.</li>
+    </ul>
+
+    <h2>Cómo nos financiamos</h2>
+    <p>
+      Participamos en el <strong>Programa de Afiliados de Amazon Europe S.à.r.l.</strong> (tag
+      <code>{{AMAZON_TAG}}</code>). Cuando compras a través de los enlaces de esta web,
+      Amazon nos paga una pequeña comisión <strong>sin que tú pagues un céntimo extra</strong>.
+      Eso nos permite mantener el sitio y seguir publicando contenido útil.
+    </p>
+    <p>
+      Nuestra recomendación editorial <strong>nunca depende de la comisión</strong>: la comisión
+      media por modelo es similar entre marcas, así que no tiene sentido recomendar el peor
+      producto. Recomendamos el que creemos mejor para cada necesidad, y señalamos con claridad
+      cuando un modelo popular no merece la pena.
+    </p>
+
+    <h2>Correcciones y comentarios</h2>
+    <p>
+      Si detectas un <strong>error factual</strong> (precio desactualizado, especificaciones
+      incorrectas, enlace roto) o quieres aportar experiencia propia con un modelo, escríbenos a
+      <a href="mailto:{{EMAIL}}">{{EMAIL}}</a>.
+      Publicamos las correcciones en un máximo de 72 h con nota de cambio visible.
+    </p>
+
+    <h2>Datos del titular</h2>
+    <p>
+      <strong>{{AUTOR}}</strong> · NIF {{NIF}} ·
+      {{DOMICILIO}} ·
+      <a href="mailto:{{EMAIL}}">{{EMAIL}}</a><br />
+      Para más detalle, consulta el <a href="/aviso-legal">aviso legal</a>.
+    </p>
+  </section>
+
+  <script type="application/ld+json" set:html={JSON.stringify(authorJsonLd)} is:inline />
+</Layout>

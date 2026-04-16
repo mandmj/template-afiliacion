@@ -1,0 +1,53 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import Features from '~/components/widgets/Features.astro';
+import Disclaimer from '~/components/afiliados/Disclaimer.astro';
+
+const metadata = {
+  title: 'Guía de compra 2026',
+  description:
+    'Todo lo que debes valorar antes de comprar un {{PRODUCTO_SINGULAR}}: los factores clave, recomendaciones por perfil de uso y errores a evitar.',
+};
+---
+
+<Layout metadata={metadata}>
+  <Hero>
+    <Fragment slot="title">Guía de compra de {{PRODUCTO_PLURAL}}</Fragment>
+    <Fragment slot="subtitle">
+      Antes de gastar tu dinero: los factores que realmente importan, recomendaciones según tu
+      perfil y los errores más comunes a evitar.
+    </Fragment>
+  </Hero>
+
+  <Features
+    tagline="Qué mirar"
+    title="Los factores clave"
+    items={[
+      // Adapta a tu nicho. Ejemplo genérico:
+      // {
+      //   title: 'Potencia',
+      //   description: 'Qué potencia necesitas según tu uso previsto.',
+      //   icon: 'tabler:bolt',
+      // },
+    ]}
+  />
+
+  <section class="mx-auto max-w-3xl px-4 py-12 prose dark:prose-invert">
+    <h2>¿Qué comprar según mi uso?</h2>
+    <p>
+      Adapta esta sección a tu nicho. Para cada perfil típico de comprador, recomienda 1-2
+      modelos y enlaza a las reviews correspondientes.
+    </p>
+
+    <h3>Perfil 1</h3>
+    <p>Descripción del perfil y recomendación.</p>
+
+    <h3>Perfil 2</h3>
+    <p>Descripción del perfil y recomendación.</p>
+  </section>
+
+  <div class="mx-auto max-w-4xl px-4 pb-12">
+    <Disclaimer />
+  </div>
+</Layout>

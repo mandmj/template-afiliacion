@@ -1,0 +1,51 @@
+---
+import { getCollection } from 'astro:content';
+import ReviewCard from './ReviewCard.astro';
+
+export interface Props {
+  currentSlug: string;
+  tags?: string[];
+  limit?: number;
+}
+
+const { currentSlug, tags = [], limit = 3 } = Astro.props;
+
+const all = await getCollection('reviews');
+
+function score(entry: any) {
+  const shared = (entry.data.tags || []).filter((t: string) => tags.includes(t)).length;
+  return shared;
+}
+
+const related = all
+  .filter((r) => r.id !== currentSlug)
+  .map((r) => ({ r, s: score(r) }))
+  .sort((a, b) => {
+    if (b.s !== a.s) return b.s - a.s;
+    return new Date(b.r.data.publishDate).getTime() - new Date(a.r.data.publishDate).getTime();
+  })
+  .slice(0, limit)
+  .map((x) => x.r);
+---
+
+{related.length > 0 && (
+  <section class="mt-16 not-prose">
+    <h2 class="font-heading text-2xl font-bold mb-6">Otras reviews que te pueden interesar</h2>
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {related.map((r) => (
+        <ReviewCard
+          href={`/reviews/${r.id}`}
+          title={r.data.title}
+          excerpt={r.data.excerpt}
+          image={r.data.product.image || r.data.image}
+          category={r.data.category}
+          score={r.data.rating}
+          price={r.data.product.price}
+        />
+      ))}
+    </div>
+    <p class="mt-6 text-sm">
+      ¿Aún dudas? Consulta nuestra <a href="/comparativas" class="font-semibold text-lime-700 dark:text-lime-400 hover:underline">comparativa principal</a>.
+    </p>
+  </section>
+)}

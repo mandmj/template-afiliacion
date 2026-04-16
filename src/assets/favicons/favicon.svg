@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- Fondo redondeado grafito -->
+  <rect width="128" height="128" rx="26" fill="#0a0a0a"/>
+
+  <!-- Rueda trasera -->
+  <circle cx="36" cy="92" r="16" fill="none" stroke="#84cc16" stroke-width="5"/>
+  <circle cx="36" cy="92" r="4" fill="#84cc16"/>
+
+  <!-- Rueda delantera -->
+  <circle cx="100" cy="92" r="16" fill="none" stroke="#84cc16" stroke-width="5"/>
+  <circle cx="100" cy="92" r="4" fill="#84cc16"/>
+
+  <!-- Plataforma (deck) -->
+  <rect x="30" y="78" width="76" height="8" rx="2" fill="#84cc16"/>
+
+  <!-- Poste vertical al manillar -->
+  <rect x="94" y="30" width="8" height="52" rx="2" fill="#84cc16"/>
+
+  <!-- Manillar -->
+  <rect x="82" y="26" width="32" height="7" rx="3" fill="#84cc16"/>
+
+  <!-- Rayo energía encima del deck -->
+  <path d="M66 48 L58 72 L66 72 L60 92 L80 64 L72 64 L78 48 Z" fill="#d9f99d"/>
+</svg>

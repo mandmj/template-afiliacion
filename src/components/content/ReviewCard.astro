@@ -1,0 +1,86 @@
+---
+import ScoreBadge from '~/components/afiliados/ScoreBadge.astro';
+
+export interface Props {
+  href: string;
+  title: string;
+  excerpt?: string;
+  image?: string;
+  category?: string;
+  score?: number;
+  price?: number;
+  currency?: string;
+  badge?: string;
+}
+
+const {
+  href,
+  title,
+  excerpt,
+  image,
+  category,
+  score,
+  price,
+  currency = 'EUR',
+  badge,
+} = Astro.props;
+
+const priceFormatted =
+  typeof price === 'number'
+    ? new Intl.NumberFormat('es-ES', { style: 'currency', currency, maximumFractionDigits: 0 }).format(price)
+    : null;
+---
+
+<a
+  href={href}
+  class="group relative flex flex-col rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden hover:-translate-y-1 hover:shadow-lg hover:border-lime-400 transition"
+>
+  {score !== undefined && (
+    <div class="absolute top-3 right-3 z-10">
+      <ScoreBadge score={score} size="sm" />
+    </div>
+  )}
+
+  {image && (
+    <div class="flex justify-center bg-slate-50 dark:bg-slate-800 p-4 h-44 overflow-hidden">
+      <img
+        src={image}
+        alt={title}
+        loading="lazy"
+        class="h-full object-contain transition-transform duration-300 group-hover:scale-105"
+      />
+    </div>
+  )}
+
+  <div class="p-5 flex-1 flex flex-col">
+    {(badge || category) && (
+      <div class="flex items-center gap-2 mb-2">
+        {badge && (
+          <span class="inline-block text-xs px-2 py-0.5 rounded bg-lime-100 text-lime-800 dark:bg-lime-900 dark:text-lime-200 font-semibold">
+            {badge}
+          </span>
+        )}
+        {category && (
+          <span class="text-xs uppercase tracking-wider text-slate-500 font-semibold">{category}</span>
+        )}
+      </div>
+    )}
+
+    <h3 class="font-heading text-base font-bold leading-tight mb-2 group-hover:text-lime-600 dark:group-hover:text-lime-400">
+      {title}
+    </h3>
+
+    {excerpt && (
+      <p class="text-sm text-slate-600 dark:text-slate-400 line-clamp-3">{excerpt}</p>
+    )}
+
+    <div class="mt-auto pt-4 flex items-center justify-between">
+      {priceFormatted ? (
+        <span class="font-heading font-bold tabular-nums text-slate-900 dark:text-white">
+          desde {priceFormatted}
+        </span>
+      ) : <span></span>}
+      <span class="text-sm font-semibold text-lime-700 dark:text-lime-400">Ver review →</span>
+    </div>
+  </div>
+</a>

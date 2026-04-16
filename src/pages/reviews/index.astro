@@ -1,0 +1,102 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '~/layouts/PageLayout.astro';
+import ReviewCard from '~/components/content/ReviewCard.astro';
+import Breadcrumb from '~/components/content/Breadcrumb.astro';
+
+const metadata = {
+  title: 'Reviews de patinetes eléctricos — análisis honestos',
+  description:
+    'Todas nuestras reviews de patinetes eléctricos disponibles en Amazon España. Análisis con autonomía real, frenos, peso y veredicto por perfil de uso.',
+};
+
+const reviews = (await getCollection('reviews'))
+  .filter((r) => !r.data.draft)
+  .sort((a, b) => new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime());
+
+// Chips únicos (tags más frecuentes)
+const chipLabels: Record<string, string> = {
+  'patinete-urbano': 'Urbano',
+  'off-road': 'Off-road',
+  'larga-autonomia': 'Larga autonomía',
+  ultraligero: 'Ultraligero',
+  'marca-espanola': 'Marca española',
+  barato: 'Barato',
+  premium: 'Premium',
+  commuter: 'Commuter',
+};
+
+const tagCounts = new Map<string, number>();
+for (const r of reviews) {
+  for (const t of r.data.tags || []) {
+    if (chipLabels[t]) tagCounts.set(t, (tagCounts.get(t) || 0) + 1);
+  }
+}
+const chips = [...tagCounts.entries()]
+  .sort((a, b) => b[1] - a[1])
+  .slice(0, 6)
+  .map(([slug, count]) => ({ slug, label: chipLabels[slug], count }));
+---
+
+<Layout metadata={metadata}>
+  <section class="mx-auto max-w-6xl px-4 py-12">
+    <Breadcrumb items={[{ label: 'Inicio', href: '/' }, { label: 'Reviews' }]} />
+
+    <header class="mb-10">
+      <p class="text-sm uppercase tracking-wider text-lime-600 dark:text-lime-400 font-semibold">Reviews</p>
+      <h1 class="font-heading text-3xl sm:text-4xl font-bold mt-2">
+        Reviews de patinetes eléctricos
+      </h1>
+      <p class="mt-4 text-lg text-slate-600 dark:text-slate-400 max-w-3xl">
+        Análisis independientes de los patinetes eléctricos más vendidos en Amazon España.
+        Cada review parte de datos reales (ficha oficial, experiencia de usuarios reales,
+        comparativa con modelos del mismo rango) y termina con un veredicto claro: para quién
+        es, para quién no, y qué alternativas considerar. Ninguna review publicada sin
+        verificar precio y disponibilidad.
+      </p>
+    </header>
+
+    {chips.length > 0 && (
+      <div class="flex flex-wrap gap-2 mb-8">
+        <span class="text-sm font-semibold mr-2 self-center">Filtrar por:</span>
+        {chips.map((c) => (
+          <a
+            href={`/categoria/${c.slug}`}
+            class="inline-flex items-center gap-1 rounded-full border border-slate-300 dark:border-slate-600 px-3 py-1 text-sm hover:border-lime-500 hover:text-lime-700 dark:hover:text-lime-400 transition"
+          >
+            {c.label} <span class="text-slate-500 tabular-nums">({c.count})</span>
+          </a>
+        ))}
+      </div>
+    )}
+
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {reviews.map((r) => (
+        <ReviewCard
+          href={`/reviews/${r.id}`}
+          title={r.data.title}
+          excerpt={r.data.excerpt}
+          image={r.data.product.image || r.data.image}
+          category={r.data.category}
+          score={r.data.rating}
+          price={r.data.product.price}
+        />
+      ))}
+    </div>
+
+    <div class="mt-12 rounded-xl border border-lime-400/50 bg-lime-50 dark:bg-lime-950/30 p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div>
+        <h2 class="font-heading text-lg font-bold">¿No sabes por dónde empezar?</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-400">
+          Consulta nuestra comparativa con los 5 mejores patinetes de 2026.
+        </p>
+      </div>
+      <a
+        href="/comparativas"
+        class="inline-flex items-center gap-2 rounded-lg bg-lime-500 hover:bg-lime-600 text-black px-5 py-2.5 font-semibold whitespace-nowrap transition"
+      >
+        Ver comparativa 2026 →
+      </a>
+    </div>
+  </section>
+</Layout>

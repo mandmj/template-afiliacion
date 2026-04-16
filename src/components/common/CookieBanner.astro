@@ -1,0 +1,94 @@
+---
+// Banner RGPD minimalista — lima + grafito. Solo se muestra si el usuario no ha
+// decidido aún. Gestiona el consentimiento para Google Analytics 4 (Consent Mode v2).
+---
+
+<div
+  id="aw-cookie-banner"
+  class="fixed bottom-0 inset-x-0 z-50 translate-y-full opacity-0 transition-all duration-300 pointer-events-none"
+  role="dialog"
+  aria-live="polite"
+  aria-label="Aviso de cookies"
+>
+  <div class="mx-auto max-w-5xl m-3 p-5 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
+    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+      <div class="flex-1">
+        <p class="font-heading font-bold text-base">🍪 Cookies</p>
+        <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">
+          Usamos cookies analíticas de <strong>Google Analytics</strong> (anonimizadas) para
+          entender qué contenido es útil y mejorar el sitio. Ninguna otra. Puedes aceptar,
+          rechazar o consultar la
+          <a href="/politica-cookies" class="text-lime-700 dark:text-lime-400 underline">política de cookies</a>.
+        </p>
+      </div>
+      <div class="flex gap-2 shrink-0 w-full sm:w-auto">
+        <button
+          id="aw-cookie-reject"
+          type="button"
+          class="flex-1 sm:flex-none rounded-lg border-2 border-slate-300 dark:border-slate-600 hover:border-slate-900 dark:hover:border-white px-4 py-2 text-sm font-semibold transition"
+        >
+          Rechazar
+        </button>
+        <button
+          id="aw-cookie-accept"
+          type="button"
+          class="flex-1 sm:flex-none rounded-lg bg-lime-500 hover:bg-lime-600 text-black px-4 py-2 text-sm font-bold shadow transition"
+        >
+          Aceptar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  (function () {
+    var KEY = 'aw-consent';
+    var banner = document.getElementById('aw-cookie-banner');
+    if (!banner) return;
+
+    function hide() {
+      banner.style.transform = 'translateY(120%)';
+      banner.style.opacity = '0';
+      banner.style.pointerEvents = 'none';
+    }
+    function show() {
+      banner.style.transform = 'translateY(0)';
+      banner.style.opacity = '1';
+      banner.style.pointerEvents = 'auto';
+    }
+
+    var stored;
+    try { stored = localStorage.getItem(KEY); } catch (e) {}
+    if (stored === 'granted' || stored === 'denied') {
+      hide();
+      return;
+    }
+
+    // Mostrar tras un pequeño delay (no bloquear render inicial)
+    setTimeout(show, 600);
+
+    function setConsent(value) {
+      try { localStorage.setItem(KEY, value); } catch (e) {}
+      if (typeof window.gtag === 'function') {
+        window.gtag('consent', 'update', {
+          ad_storage: value === 'granted' ? 'granted' : 'denied',
+          ad_user_data: value === 'granted' ? 'granted' : 'denied',
+          ad_personalization: value === 'granted' ? 'granted' : 'denied',
+          analytics_storage: value === 'granted' ? 'granted' : 'denied',
+        });
+      }
+      if (value === 'granted') {
+        window.dispatchEvent(new CustomEvent('aw-consent-granted'));
+      }
+      hide();
+    }
+
+    document.getElementById('aw-cookie-accept').addEventListener('click', function () {
+      setConsent('granted');
+    });
+    document.getElementById('aw-cookie-reject').addEventListener('click', function () {
+      setConsent('denied');
+    });
+  })();
+</script>

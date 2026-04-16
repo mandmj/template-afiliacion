@@ -1,0 +1,159 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '~/layouts/PageLayout.astro';
+
+import Features from '~/components/widgets/Features.astro';
+import FAQs from '~/components/widgets/FAQs.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+import Disclaimer from '~/components/afiliados/Disclaimer.astro';
+import ReviewCard from '~/components/content/ReviewCard.astro';
+
+const metadata = {
+  title: '{{SITE_NAME}} — {{TAGLINE}}',
+  ignoreTitleTemplate: true,
+  description:
+    '{{META_DESCRIPTION}}',
+};
+
+const latestReviews = (await getCollection('reviews'))
+  .filter((r) => !r.data.draft)
+  .sort((a, b) => (b.data.rating ?? 0) - (a.data.rating ?? 0))
+  .slice(0, 6);
+
+const faqs = [
+  {
+    question: '{{FAQ_1_Q}}',
+    answer: '{{FAQ_1_A}}',
+  },
+  {
+    question: '{{FAQ_2_Q}}',
+    answer: '{{FAQ_2_A}}',
+  },
+  {
+    question: '{{FAQ_3_Q}}',
+    answer: '{{FAQ_3_A}}',
+  },
+];
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.question,
+    acceptedAnswer: { '@type': 'Answer', text: f.answer },
+  })),
+};
+---
+
+<Layout metadata={metadata}>
+  <!-- Hero tipográfico — personaliza el texto por nicho -->
+  <section class="relative overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-br from-lime-50 via-white to-lime-100 dark:from-lime-950/40 dark:via-slate-900 dark:to-lime-950/30"></div>
+    <div class="absolute -top-24 -right-24 h-96 w-96 rounded-full bg-lime-300/40 blur-3xl" aria-hidden="true"></div>
+    <div class="absolute -bottom-24 -left-24 h-96 w-96 rounded-full bg-lime-400/20 blur-3xl" aria-hidden="true"></div>
+
+    <div class="relative mx-auto max-w-6xl px-4 py-20 sm:py-28">
+      <div class="max-w-3xl">
+        <div class="inline-flex items-center gap-2 rounded-full border border-lime-500/40 bg-white/60 dark:bg-slate-900/60 backdrop-blur px-3 py-1 text-xs font-semibold text-lime-800 dark:text-lime-300">
+          <span class="inline-block w-2 h-2 rounded-full bg-lime-500 animate-pulse"></span>
+          Actualizado {new Date().toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })}
+        </div>
+
+        <h1 class="font-heading mt-5 text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.05] text-slate-900 dark:text-white">
+          {'{{HERO_TITLE}}'}<br class="hidden sm:block" />
+          <span class="text-lime-600 dark:text-lime-400">{'{{HERO_TITLE_ACCENT}}'}</span>
+        </h1>
+
+        <p class="mt-6 text-lg sm:text-xl text-slate-700 dark:text-slate-300 max-w-xl">
+          {'{{HERO_SUBTITLE}}'}
+        </p>
+
+        <div class="mt-8 flex flex-col sm:flex-row gap-3">
+          <a
+            href="/reviews"
+            class="inline-flex items-center justify-center gap-2 rounded-lg bg-slate-900 hover:bg-black text-white dark:bg-lime-500 dark:hover:bg-lime-400 dark:text-black px-6 py-3 font-semibold shadow-lg shadow-lime-500/20 transition"
+          >
+            Ver todas las reviews →
+          </a>
+          <a
+            href="/guia-de-compra"
+            class="inline-flex items-center justify-center gap-2 rounded-lg border-2 border-slate-900 dark:border-lime-400 hover:bg-slate-900 hover:text-white dark:hover:bg-lime-500 dark:hover:text-black px-6 py-3 font-semibold transition"
+          >
+            Guía de compra
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Categorías (adaptar iconos y textos por nicho) -->
+  <Features
+    id="categorias"
+    tagline="Categorías"
+    title="¿Qué estás buscando?"
+    subtitle="Filtra según tu uso y encuentra reviews que encajan con tu perfil."
+    items={[
+      // {
+      //   title: 'Categoría 1',
+      //   description: 'Descripción corta de la categoría.',
+      //   icon: 'tabler:star',
+      //   callToAction: { text: 'Ver →', href: '/categoria/slug-1' },
+      // },
+    ]}
+  />
+
+  <!-- Featured reviews dinámicas -->
+  {latestReviews.length > 0 && (
+    <section class="px-4 py-14 bg-lime-50/30 dark:bg-lime-950/10">
+      <div class="mx-auto max-w-6xl">
+        <p class="text-sm uppercase tracking-wider text-lime-600 dark:text-lime-400 font-semibold text-center">Reviews</p>
+        <h2 class="font-heading text-3xl sm:text-4xl font-bold text-center mt-2 mb-3">
+          Los más recomendables ahora
+        </h2>
+
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {latestReviews.map((r) => (
+            <ReviewCard
+              href={`/reviews/${r.id}`}
+              title={r.data.title}
+              excerpt={r.data.excerpt}
+              image={r.data.product.image || r.data.image}
+              category={r.data.category}
+              score={r.data.rating}
+              price={r.data.product.price}
+            />
+          ))}
+        </div>
+
+        <div class="mt-10 text-center">
+          <a
+            href="/reviews"
+            class="inline-flex items-center gap-2 rounded-lg border-2 border-lime-500 hover:bg-lime-500 hover:text-black px-5 py-2.5 font-semibold transition"
+          >
+            Ver todas las reviews →
+          </a>
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- FAQ con schema -->
+  <FAQs
+    title="Preguntas frecuentes"
+    tagline="FAQ"
+    classes={{ container: 'max-w-4xl' }}
+    items={faqs.map((f) => ({ title: f.question, description: f.answer }))}
+  />
+
+  <CallToAction actions={[{ variant: 'primary', text: 'Ver reviews', href: '/reviews' }]}>
+    <Fragment slot="title">¿Listo para decidir?</Fragment>
+    <Fragment slot="subtitle">Compara las mejores opciones antes de comprar.</Fragment>
+  </CallToAction>
+
+  <div class="mx-auto max-w-4xl px-4 pb-12">
+    <Disclaimer />
+  </div>
+
+  <script type="application/ld+json" set:html={JSON.stringify(faqJsonLd)} is:inline />
+</Layout>

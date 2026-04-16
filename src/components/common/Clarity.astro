@@ -1,0 +1,32 @@
+---
+// Microsoft Clarity — heatmaps y session recordings
+// Usa Consent Mode: solo carga el script si el usuario aceptó en el banner.
+// Project ID: wci737jyo0
+---
+
+<script is:inline>
+  (function () {
+    var PROJECT_ID = 'wci737jyo0';
+
+    function loadClarity() {
+      if (window.clarity) return;
+      var c = document.createElement('script');
+      c.async = true;
+      c.src = 'https://www.clarity.ms/tag/' + PROJECT_ID;
+      document.head.appendChild(c);
+      // Shim compatible con API Clarity para que queue eventos tempranos funcione
+      window.clarity = window.clarity || function () {
+        (window.clarity.q = window.clarity.q || []).push(arguments);
+      };
+    }
+
+    try {
+      if (localStorage.getItem('aw-consent') === 'granted') {
+        loadClarity();
+      }
+    } catch (e) {}
+
+    // Permite cargar Clarity tras aceptar el banner sin recargar
+    window.addEventListener('aw-consent-granted', loadClarity);
+  })();
+</script>

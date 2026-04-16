@@ -1,0 +1,97 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '~/layouts/PageLayout.astro';
+import ReviewCard from '~/components/content/ReviewCard.astro';
+import Breadcrumb from '~/components/content/Breadcrumb.astro';
+
+export const prerender = true;
+
+/**
+ * Mapa de categorías: slug → { label, description }
+ *
+ * IMPORTANTE: Edita este mapa para tu nicho antes del primer deploy.
+ * El slug debe coincidir con el tag que uses en los frontmatter de las reviews.
+ * El orden es libre. Solo las categorías con al menos 1 review se generan como página.
+ *
+ * Ejemplo patinetes:
+ *   'patinete-urbano': { label: 'Patinetes urbanos', description: '...' },
+ *   'off-road': { label: 'Off-road', description: '...' },
+ *
+ * Ejemplo proyectores:
+ *   '4k': { label: 'Proyectores 4K', description: '...' },
+ *   'portatil': { label: 'Proyectores portátiles', description: '...' },
+ */
+
+export async function getStaticPaths() {
+  const CATEGORIES: Record<string, { label: string; description: string }> = {
+    // 'slug-categoria-1': {
+    //   label: 'Nombre visible categoría 1',
+    //   description: 'Descripción SEO de 200-300 palabras explicando qué caracteriza a esta categoría.',
+    // },
+  };
+
+  const reviews = await getCollection('reviews');
+  const allTags = new Set<string>();
+  for (const r of reviews) {
+    for (const t of r.data.tags || []) allTags.add(t);
+  }
+  return [...allTags]
+    .filter((t) => CATEGORIES[t])
+    .map((slug) => ({
+      params: { slug },
+      props: { category: CATEGORIES[slug] },
+    }));
+}
+
+const { slug } = Astro.params;
+const { category } = Astro.props as { category: { label: string; description: string } };
+
+const reviews = (await getCollection('reviews'))
+  .filter((r) => !r.data.draft && (r.data.tags || []).includes(slug!))
+  .sort((a, b) => new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime());
+
+const metadata = {
+  title: `${category.label} — reviews y comparativas`,
+  description: category.description.slice(0, 155),
+};
+---
+
+<Layout metadata={metadata}>
+  <section class="mx-auto max-w-6xl px-4 py-12">
+    <Breadcrumb
+      items={[
+        { label: 'Inicio', href: '/' },
+        { label: 'Reviews', href: '/reviews' },
+        { label: category.label },
+      ]}
+    />
+
+    <header class="mb-10">
+      <p class="text-sm uppercase tracking-wider text-lime-600 dark:text-lime-400 font-semibold">Categoría</p>
+      <h1 class="font-heading text-3xl sm:text-4xl font-bold mt-2">{category.label}</h1>
+      <p class="mt-4 text-lg text-slate-600 dark:text-slate-400 max-w-3xl">
+        {category.description}
+      </p>
+    </header>
+
+    {reviews.length === 0 ? (
+      <p class="text-slate-600 dark:text-slate-400">
+        Aún no hay reviews en esta categoría. Vuelve pronto o consulta <a href="/reviews" class="text-lime-700 dark:text-lime-400 underline">todas nuestras reviews</a>.
+      </p>
+    ) : (
+      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {reviews.map((r) => (
+          <ReviewCard
+            href={`/reviews/${r.id}`}
+            title={r.data.title}
+            excerpt={r.data.excerpt}
+            image={r.data.product.image || r.data.image}
+            category={r.data.category}
+            score={r.data.rating}
+            price={r.data.product.price}
+          />
+        ))}
+      </div>
+    )}
+  </section>
+</Layout>
