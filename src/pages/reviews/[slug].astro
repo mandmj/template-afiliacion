@@ -1,5 +1,6 @@
 ---
 import { getCollection, render } from 'astro:content';
+import { SITE } from 'astrowind:config';
 import Layout from '~/layouts/PageLayout.astro';
 import Breadcrumb from '~/components/content/Breadcrumb.astro';
 import RelatedReviews from '~/components/content/RelatedReviews.astro';
@@ -19,6 +20,9 @@ export async function getStaticPaths() {
 const { entry } = Astro.props;
 const { Content } = await render(entry);
 
+const siteUrl = SITE.site;
+const siteName = SITE.name;
+
 const metadata = {
   title: entry.data.metadata?.title || entry.data.title,
   description: entry.data.metadata?.description || entry.data.excerpt,
@@ -33,7 +37,7 @@ const metadata = {
   },
 };
 
-const canonicalUrl = new URL(`/reviews/${entry.id}`, Astro.site ?? 'https://{{DOMAIN}}').toString();
+const canonicalUrl = new URL(`/reviews/${entry.id}`, Astro.site ?? siteUrl).toString();
 
 const reviewJsonLd = {
   '@context': 'https://schema.org',
@@ -44,17 +48,18 @@ const reviewJsonLd = {
   ...(entry.data.updateDate ? { dateModified: entry.data.updateDate.toISOString() } : {}),
   author: {
     '@type': 'Organization',
-    name: '{{SITE_NAME}}',
-    url: 'https://{{DOMAIN}}',
+    name: siteName,
+    url: siteUrl,
   },
   publisher: {
     '@type': 'Organization',
-    name: '{{SITE_NAME}}',
-    logo: { '@type': 'ImageObject', url: 'https://{{DOMAIN}}/favicon.svg' },
+    name: siteName,
+    logo: { '@type': 'ImageObject', url: `${siteUrl}/favicon.svg` },
   },
   itemReviewed: {
     '@type': 'Product',
     name: entry.data.product.title,
+    description: entry.data.excerpt,
     image: entry.data.product.image,
     brand: { '@type': 'Brand', name: entry.data.product.brand },
     ...(entry.data.product.rating && entry.data.product.reviewsCount
@@ -74,6 +79,25 @@ const reviewJsonLd = {
       url: entry.data.product.url,
       availability: 'https://schema.org/InStock',
       priceValidUntil: new Date(new Date().setMonth(new Date().getMonth() + 3)).toISOString().split('T')[0],
+      seller: { '@type': 'Organization', name: 'Amazon.es' },
+      hasMerchantReturnPolicy: {
+        '@type': 'MerchantReturnPolicy',
+        applicableCountry: 'ES',
+        returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
+        merchantReturnDays: 30,
+        returnMethod: 'https://schema.org/ReturnByMail',
+        returnFees: 'https://schema.org/FreeReturn',
+      },
+      shippingDetails: {
+        '@type': 'OfferShippingDetails',
+        shippingRate: { '@type': 'MonetaryAmount', value: 0, currency: 'EUR' },
+        shippingDestination: { '@type': 'DefinedRegion', addressCountry: 'ES' },
+        deliveryTime: {
+          '@type': 'ShippingDeliveryTime',
+          handlingTime: { '@type': 'QuantitativeValue', minValue: 0, maxValue: 1, unitCode: 'DAY' },
+          transitTime: { '@type': 'QuantitativeValue', minValue: 1, maxValue: 3, unitCode: 'DAY' },
+        },
+      },
     },
   },
   reviewRating: { '@type': 'Rating', ratingValue: entry.data.rating, bestRating: 10, worstRating: 0 },

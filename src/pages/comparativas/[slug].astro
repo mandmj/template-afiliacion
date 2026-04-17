@@ -34,14 +34,44 @@ const jsonLd = {
     item: {
       '@type': 'Product',
       name: p.title,
+      description: `${p.brand} ${p.title} — modelo incluido en la comparativa ${entry.data.title}.`,
       image: p.image,
       brand: { '@type': 'Brand', name: p.brand },
+      ...(p.rating && p.reviewsCount
+        ? {
+            aggregateRating: {
+              '@type': 'AggregateRating',
+              ratingValue: p.rating,
+              reviewCount: p.reviewsCount,
+              bestRating: 5,
+            },
+          }
+        : {}),
       offers: {
         '@type': 'Offer',
         price: p.price,
         priceCurrency: p.currency || 'EUR',
         url: p.url,
         availability: 'https://schema.org/InStock',
+        seller: { '@type': 'Organization', name: 'Amazon.es' },
+        hasMerchantReturnPolicy: {
+          '@type': 'MerchantReturnPolicy',
+          applicableCountry: 'ES',
+          returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
+          merchantReturnDays: 30,
+          returnMethod: 'https://schema.org/ReturnByMail',
+          returnFees: 'https://schema.org/FreeReturn',
+        },
+        shippingDetails: {
+          '@type': 'OfferShippingDetails',
+          shippingRate: { '@type': 'MonetaryAmount', value: 0, currency: 'EUR' },
+          shippingDestination: { '@type': 'DefinedRegion', addressCountry: 'ES' },
+          deliveryTime: {
+            '@type': 'ShippingDeliveryTime',
+            handlingTime: { '@type': 'QuantitativeValue', minValue: 0, maxValue: 1, unitCode: 'DAY' },
+            transitTime: { '@type': 'QuantitativeValue', minValue: 1, maxValue: 3, unitCode: 'DAY' },
+          },
+        },
       },
     },
   })),
