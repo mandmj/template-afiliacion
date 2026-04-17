@@ -2,39 +2,43 @@
 import { ANALYTICS } from 'astrowind:config';
 
 const gaId = ANALYTICS?.vendors?.googleAnalytics?.id;
+
+const initScript = gaId
+  ? `
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    window.gtag = gtag;
+    gtag('consent', 'default', {
+      ad_storage: 'denied',
+      ad_user_data: 'denied',
+      ad_personalization: 'denied',
+      analytics_storage: 'denied',
+      functionality_storage: 'granted',
+      security_storage: 'granted',
+      wait_for_update: 500
+    });
+    try {
+      var stored = localStorage.getItem('aw-consent');
+      if (stored === 'granted') {
+        gtag('consent', 'update', {
+          ad_storage: 'granted',
+          ad_user_data: 'granted',
+          ad_personalization: 'granted',
+          analytics_storage: 'granted'
+        });
+      }
+    } catch (e) {}
+    gtag('js', new Date());
+    gtag('config', '${gaId}', { anonymize_ip: true });
+  `
+  : '';
 ---
 
 {
   gaId && (
     <Fragment>
       <script is:inline src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`} async />
-      <script is:inline define:vars={{ gaId }}>{`
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        window.gtag = gtag;
-        gtag('consent', 'default', {
-          ad_storage: 'denied',
-          ad_user_data: 'denied',
-          ad_personalization: 'denied',
-          analytics_storage: 'denied',
-          functionality_storage: 'granted',
-          security_storage: 'granted',
-          wait_for_update: 500
-        });
-        try {
-          var stored = localStorage.getItem('aw-consent');
-          if (stored === 'granted') {
-            gtag('consent', 'update', {
-              ad_storage: 'granted',
-              ad_user_data: 'granted',
-              ad_personalization: 'granted',
-              analytics_storage: 'granted'
-            });
-          }
-        } catch (e) {}
-        gtag('js', new Date());
-        gtag('config', gaId, { anonymize_ip: true });
-      `}</script>
+      <script is:inline set:html={initScript} />
     </Fragment>
   )
 }
