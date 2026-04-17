@@ -1,5 +1,6 @@
 ---
 import { getCollection, render } from 'astro:content';
+import { SITE } from 'astrowind:config';
 import Layout from '~/layouts/PageLayout.astro';
 import Breadcrumb from '~/components/content/Breadcrumb.astro';
 import Disclaimer from '~/components/afiliados/Disclaimer.astro';
@@ -17,7 +18,10 @@ export async function getStaticPaths() {
 const { entry } = Astro.props;
 const { Content } = await render(entry);
 
-const canonicalUrl = new URL(`/guias/${entry.id}`, Astro.site ?? 'https://{{DOMAIN}}').toString();
+const siteUrl = SITE.site;
+const siteName = SITE.name;
+
+const canonicalUrl = new URL(`/guias/${entry.id}`, Astro.site ?? siteUrl).toString();
 
 const metadata = {
   title: entry.data.metadata?.title || entry.data.title,
@@ -38,11 +42,11 @@ const articleJsonLd = {
   datePublished: entry.data.publishDate.toISOString(),
   ...(entry.data.updateDate ? { dateModified: entry.data.updateDate.toISOString() } : {}),
   inLanguage: 'es-ES',
-  author: { '@type': 'Organization', name: '{{SITE_NAME}}' },
+  author: { '@type': 'Organization', name: siteName, url: siteUrl },
   publisher: {
     '@type': 'Organization',
-    name: '{{SITE_NAME}}',
-    logo: { '@type': 'ImageObject', url: 'https://{{DOMAIN}}/favicon.svg' },
+    name: siteName,
+    logo: { '@type': 'ImageObject', url: `${siteUrl}/favicon.svg` },
   },
 };
 ---
