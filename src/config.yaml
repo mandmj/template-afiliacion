@@ -5,6 +5,7 @@ site:
   trailingSlash: false
 
   googleSiteVerificationId: ''
+  bingSiteVerificationId: ''
 
 # Default SEO metadata
 metadata:
