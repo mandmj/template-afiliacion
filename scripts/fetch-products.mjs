@@ -4,7 +4,7 @@
  *
  * Uso:
  *   node scripts/fetch-products.mjs --asin B09ZYXWV --asin B09FOO
- *   node scripts/fetch-products.mjs --search "patinete electrico adulto" --limit 5
+ *   node scripts/fetch-products.mjs --search "palabras clave del nicho" --limit 5
  */
 import 'dotenv/config';
 import amazonPaapi from 'amazon-paapi';
