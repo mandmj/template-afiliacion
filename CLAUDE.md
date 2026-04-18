@@ -96,10 +96,12 @@ src/
 └── navigation.ts         → header + footer
 
 scripts/
-├── fetch-products.mjs    → PA-API scraper oficial
-├── scrape-product.mjs    → fallback HTML scraper
-├── update-prices.mjs     → cron semanal de refresco
-└── indexnow-ping.mjs     → notifica Bing tras publicación
+├── fetch-products.mjs       → PA-API scraper oficial
+├── scrape-product.mjs       → fallback HTML scraper
+├── update-prices.mjs        → cron semanal de refresco
+├── indexnow-ping.mjs        → notifica Bing tras publicación
+├── research-keywords.mjs    → Google Suggest long-tail (Fase 3)
+└── research-amazon.mjs      → Amazon.es bestsellers orgánicos (Fase 3)
 
 .claude/
 ├── agents/               → 4 subagentes
@@ -117,3 +119,14 @@ scripts/
 - **Awin como segunda red**: mismo Publisher ID para todos los sitios del mismo titular.
 - **Sin Partytown**: GA4 carga directo con Consent Mode para respetar GDPR sin degradar UX.
 - **Sin blog AstroWind**: `apps.blog.isEnabled = false`. Las reviews/comparativas/guías usan colecciones propias.
+- **Verificación de motores de búsqueda**: dos campos en `src/config.yaml` (`googleSiteVerificationId`, `bingSiteVerificationId`). `SiteVerification.astro` renderiza automáticamente los `<meta>` correspondientes cuando están rellenos. Para GSC puedes también usar verificación por TXT en DNS; para Bing el meta tag es lo más universal.
+
+## Reglas de sanitización MDX
+
+Astro 5 trata ciertos patrones como JSX y rompe el build:
+
+- `<https://...>` (autolink Markdown) → usar `[texto](url)`.
+- `(\d+)"` en texto plano (pulgadas) → usar `″` (U+2033 prime) o escribir "pulgadas".
+- `<digit` y `>digit` en texto → usar `&lt;digit` y `&gt;digit`.
+
+El agente `content-writer` tiene estas reglas documentadas.

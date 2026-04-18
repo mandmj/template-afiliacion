@@ -107,8 +107,9 @@ Copia el output (64 chars hex). Luego:
 
 ## 10. Search Console + Bing (15 min)
 
-- **Google Search Console**: <https://search.google.com/search-console> → Add property → URL prefix → `https://<dominio>` → verificación **HTML tag** → pega el token en `src/config.yaml` campo `googleSiteVerificationId`.
-- **Bing Webmaster Tools**: <https://www.bing.com/webmasters> → Sign in → Import from Google Search Console.
+- **Google Search Console**: <https://search.google.com/search-console> → Add property → URL prefix → `https://<dominio>` → verificación por **HTML tag** (pega el token en `src/config.yaml` campo `googleSiteVerificationId`) **o** por **registro TXT en DNS** (más rápido si usas Cloudflare DNS: sin redeploy).
+- **Bing Webmaster Tools**: <https://www.bing.com/webmasters> → Sign in → **Import from Google Search Console** (lo más rápido, hereda la verificación). Si prefieres verificar manualmente, usa el meta tag y pega el token en `src/config.yaml` campo `bingSiteVerificationId` — `SiteVerification.astro` lo incluirá en el `<head>` automáticamente.
+- Enviar `sitemap-index.xml` en ambas consolas. Solicitar indexación de las 5-8 URLs iniciales más importantes en GSC.
 
 ## 11. Amazon Afiliados (tag nuevo opcional)
 
