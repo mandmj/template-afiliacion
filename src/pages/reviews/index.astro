@@ -5,9 +5,9 @@ import ReviewCard from '~/components/content/ReviewCard.astro';
 import Breadcrumb from '~/components/content/Breadcrumb.astro';
 
 const metadata = {
-  title: 'Reviews de patinetes eléctricos — análisis honestos',
+  title: 'Reviews de {{PRODUCTO_PLURAL}} — análisis honestos',
   description:
-    'Todas nuestras reviews de patinetes eléctricos disponibles en Amazon España. Análisis con autonomía real, frenos, peso y veredicto por perfil de uso.',
+    'Todas nuestras reviews de {{PRODUCTO_PLURAL}} disponibles en Amazon España. Análisis con datos reales, experiencia de uso y veredicto por perfil de comprador.',
 };
 
 const reviews = (await getCollection('reviews'))
@@ -15,15 +15,12 @@ const reviews = (await getCollection('reviews'))
   .sort((a, b) => new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime());
 
 // Chips únicos (tags más frecuentes)
+// Ajusta este mapa según los tags que uses en los frontmatter de tus reviews.
+// El mapa debe coincidir con los slugs de src/pages/categoria/[slug].astro
+// y/o con subtags específicos del nicho (ej. premium, barato, ultraligero...).
 const chipLabels: Record<string, string> = {
-  'patinete-urbano': 'Urbano',
-  'off-road': 'Off-road',
-  'larga-autonomia': 'Larga autonomía',
-  ultraligero: 'Ultraligero',
-  'marca-espanola': 'Marca española',
-  barato: 'Barato',
-  premium: 'Premium',
-  commuter: 'Commuter',
+  // 'slug-1': 'Etiqueta 1',
+  // 'slug-2': 'Etiqueta 2',
 };
 
 const tagCounts = new Map<string, number>();
@@ -45,10 +42,10 @@ const chips = [...tagCounts.entries()]
     <header class="mb-10">
       <p class="text-sm uppercase tracking-wider text-lime-600 dark:text-lime-400 font-semibold">Reviews</p>
       <h1 class="font-heading text-3xl sm:text-4xl font-bold mt-2">
-        Reviews de patinetes eléctricos
+        Reviews de {{PRODUCTO_PLURAL}}
       </h1>
       <p class="mt-4 text-lg text-slate-600 dark:text-slate-400 max-w-3xl">
-        Análisis independientes de los patinetes eléctricos más vendidos en Amazon España.
+        Análisis independientes de los {{PRODUCTO_PLURAL}} más vendidos en Amazon España.
         Cada review parte de datos reales (ficha oficial, experiencia de usuarios reales,
         comparativa con modelos del mismo rango) y termina con un veredicto claro: para quién
         es, para quién no, y qué alternativas considerar. Ninguna review publicada sin
@@ -88,7 +85,7 @@ const chips = [...tagCounts.entries()]
       <div>
         <h2 class="font-heading text-lg font-bold">¿No sabes por dónde empezar?</h2>
         <p class="text-sm text-slate-600 dark:text-slate-400">
-          Consulta nuestra comparativa con los 5 mejores patinetes de 2026.
+          Consulta nuestra comparativa con los 5 mejores {{PRODUCTO_PLURAL}} de 2026.
         </p>
       </div>
       <a

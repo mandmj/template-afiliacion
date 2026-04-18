@@ -4,9 +4,9 @@ import Layout from '~/layouts/PageLayout.astro';
 import Breadcrumb from '~/components/content/Breadcrumb.astro';
 
 const metadata = {
-  title: 'Guías de patinetes eléctricos',
+  title: 'Guías de {{PRODUCTO_PLURAL}}',
   description:
-    'Guías prácticas sobre patinetes eléctricos: mantenimiento, batería, normativa DGT, seguros y consejos para sacar el máximo partido a tu patinete.',
+    'Guías prácticas sobre {{PRODUCTO_PLURAL}}: criterios de compra, mantenimiento, normativa aplicable y consejos para sacar el máximo partido a tu compra.',
 };
 
 const guides = (await getCollection('guides'))
@@ -21,12 +21,12 @@ const guides = (await getCollection('guides'))
     <header class="mb-10">
       <p class="text-sm uppercase tracking-wider text-lime-600 dark:text-lime-400 font-semibold">Guías</p>
       <h1 class="font-heading text-3xl sm:text-4xl font-bold mt-2">
-        Guías de patinetes eléctricos
+        Guías de {{PRODUCTO_PLURAL}}
       </h1>
       <p class="mt-4 text-lg text-slate-600 dark:text-slate-400 max-w-3xl">
-        Todo lo que necesitas saber más allá de qué modelo comprar: mantenimiento,
-        normativa DGT, seguros obligatorios por ciudades, cuidado de la batería en
-        invierno y recomendaciones según edad.
+        Todo lo que necesitas saber más allá de qué modelo comprar: criterios clave,
+        mantenimiento, normativa aplicable al nicho, errores de compra frecuentes y
+        recomendaciones según tu perfil.
       </p>
     </header>
 
