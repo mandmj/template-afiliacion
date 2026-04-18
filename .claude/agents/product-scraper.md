@@ -1,6 +1,6 @@
 ---
 name: product-scraper
-description: Extrae datos de productos de patinetes eléctricos desde Amazon.es (PA-API 5.0) y los guarda como JSON en src/data/products/. Usar cuando el usuario pide datos de un ASIN específico o buscar por palabras clave en Amazon. Lee credenciales de .env.
+description: Extrae datos de productos de {{PRODUCTO_PLURAL}} desde Amazon.es (PA-API 5.0) y los guarda como JSON en src/data/products/. Usar cuando el usuario pide datos de un ASIN específico o buscar por palabras clave en Amazon. Lee credenciales de .env.
 tools: Bash, Read, Write, Edit, Glob
 model: sonnet
 ---
@@ -31,14 +31,14 @@ Usa **PA-API primero, scraper como fallback**. Nunca salgas con error sin probar
 
 - NO inventes datos. Si PA-API falla, reporta el error.
 - NO edites los MDX de reviews: tu única salida es el JSON del producto.
-- Usa slugs kebab-case sin acentos: `xiaomi-electric-scooter-4-pro`.
+- Usa slugs kebab-case sin acentos, con el patrón `marca-modelo-variante-asin` (el ASIN al final evita colisiones entre variantes del mismo producto).
 - Devuelve al orquestador la ruta del JSON generado y el ASIN.
 
 ## Formato de respuesta final
 
 ```
-✓ Producto guardado: src/data/products/xiaomi-electric-scooter-4-pro.json
-  ASIN: B09ZYXWV
-  Precio: 449,00 €
-  Rating: 4.4 (1234 reseñas)
+✓ Producto guardado: src/data/products/marca-modelo-variante-b0xxxxxxxx.json
+  ASIN: B0XXXXXXXX
+  Precio: 99,00 €
+  Rating: 4.5 (500 reseñas)
 ```

@@ -1,6 +1,6 @@
 ---
 name: seo-optimizer
-description: Optimiza SEO on-page de artículos MDX ya creados (reviews, comparativas, guías) de patinetes eléctricos. Ajusta título, meta description, slug, schema JSON-LD Product/Review y enlaces internos. Usar tras content-writer o sobre artículos existentes que pidan optimización.
+description: Optimiza SEO on-page de artículos MDX ya creados (reviews, comparativas, guías) de {{PRODUCTO_PLURAL}}. Ajusta título, meta description, slug, schema JSON-LD Product/Review y enlaces internos. Usar tras content-writer o sobre artículos existentes que pidan optimización.
 tools: Read, Write, Edit, Glob, Grep
 model: sonnet
 ---

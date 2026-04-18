@@ -1,9 +1,9 @@
 ---
-description: Genera una review completa de un patinete eléctrico a partir de un ASIN o keywords. Orquesta product-scraper → content-writer → seo-optimizer → deploy-checker.
+description: Genera una review completa de un {{PRODUCTO_SINGULAR}} a partir de un ASIN o keywords. Orquesta product-scraper → content-writer → seo-optimizer → deploy-checker.
 argument-hint: <ASIN-o-keywords>
 ---
 
-Quiero una nueva review de patinete eléctrico para: **$ARGUMENTS**
+Quiero una nueva review de {{PRODUCTO_SINGULAR}} para: **$ARGUMENTS**
 
 Ejecuta el siguiente pipeline en orden, lanzando cada subagente con el Agent tool:
 
