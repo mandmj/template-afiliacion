@@ -3,13 +3,15 @@ description: Auditoría SEO completa del sitio o de una URL específica. Orquest
 argument-hint: [url-opcional]
 ---
 
-Audita SEO de: **${ARGUMENTS:-sitio completo (todas las piezas de src/content/)}**
+Audita SEO de: **$ARGUMENTS**
+
+Si `$ARGUMENTS` está vacío, audita el sitio completo (todas las piezas de `src/content/` y la URL de producción definida en `PUBLIC_SITE_URL`).
 
 Ejecuta el siguiente pipeline invocando cada subagente con la tool `Agent`. **Prioridad: correr en paralelo** siempre que sea posible (un único mensaje con múltiples tool calls).
 
 ## Orquestación
 
-### Grupo 1 — análisis de URL (si $ARGUMENTS es una URL)
+### Grupo 1 — análisis de URL (si se pasó URL en $ARGUMENTS)
 
 Lanza en paralelo (1 único mensaje, 4 tool calls):
 
