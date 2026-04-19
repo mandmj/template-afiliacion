@@ -1,0 +1,36 @@
+---
+/**
+ * BreadcrumbJsonLd: emite schema.org BreadcrumbList en JSON-LD.
+ *
+ * Pensado para usarse junto al componente visual Breadcrumb.astro del mismo
+ * directorio — se le pasan los mismos `items`. Google Rich Results soporta
+ * este schema y lo usa para mostrar migas de pan en SERPs.
+ *
+ * Uso:
+ *   <Breadcrumb items={...} />                 ← visual + jsonld integrado
+ *   O manualmente: <BreadcrumbJsonLd items={...} />
+ */
+import { SITE } from 'astrowind:config';
+
+export interface Props {
+  items: Array<{ label: string; href?: string }>;
+}
+
+const { items } = Astro.props;
+const siteUrl = SITE.site || '';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: items.map((item, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    name: item.label,
+    ...(item.href
+      ? { item: item.href.startsWith('http') ? item.href : new URL(item.href, siteUrl).toString() }
+      : {}),
+  })),
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />

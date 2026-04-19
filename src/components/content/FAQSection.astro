@@ -1,0 +1,71 @@
+---
+/**
+ * FAQSection: bloque de FAQs visual con schema.org FAQPage en JSON-LD.
+ *
+ * Nota sobre rich results Google: FAQPage rich results están restringidos
+ * a sitios de gobierno/sanidad desde agosto 2023. En sitios comerciales,
+ * el schema sigue siendo útil para:
+ *   - Citaciones de AI crawlers (ChatGPT, Claude, Perplexity)
+ *   - Bing (que sí sigue soportando FAQ rich results)
+ *   - Futuros cambios de política Google
+ *
+ * Uso:
+ *   <FAQSection
+ *     title="Preguntas frecuentes"
+ *     items={[
+ *       { question: '¿Pregunta 1?', answer: 'Respuesta 1.' },
+ *       { question: '¿Pregunta 2?', answer: 'Respuesta 2.' },
+ *     ]}
+ *   />
+ */
+
+export interface Props {
+  items: Array<{ question: string; answer: string }>;
+  title?: string;
+  tagline?: string;
+}
+
+const { items, title = 'Preguntas frecuentes', tagline = 'FAQ' } = Astro.props;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: items.map((item) => ({
+    '@type': 'Question',
+    name: item.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: item.answer,
+    },
+  })),
+};
+---
+
+<section class="mx-auto max-w-4xl px-4 py-12">
+  {tagline && (
+    <p class="text-sm uppercase tracking-wider text-cyan-600 dark:text-cyan-400 font-semibold text-center">
+      {tagline}
+    </p>
+  )}
+  <h2 class="font-heading text-3xl sm:text-4xl font-bold text-center mt-2 mb-8">
+    {title}
+  </h2>
+
+  <dl class="space-y-4">
+    {items.map((item) => (
+      <details class="group rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-5 py-4 open:shadow-md transition">
+        <summary class="flex items-center justify-between gap-3 cursor-pointer list-none">
+          <dt class="font-heading text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-100">
+            {item.question}
+          </dt>
+          <span class="shrink-0 w-7 h-7 rounded-full bg-cyan-50 dark:bg-cyan-950/40 flex items-center justify-center text-cyan-700 dark:text-cyan-300 text-xl font-bold leading-none group-open:rotate-45 transition-transform">+</span>
+        </summary>
+        <dd class="mt-3 text-slate-700 dark:text-slate-300 leading-relaxed">
+          {item.answer}
+        </dd>
+      </details>
+    ))}
+  </dl>
+</section>
+
+<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />

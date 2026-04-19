@@ -1,4 +1,6 @@
 ---
+import BreadcrumbJsonLd from './BreadcrumbJsonLd.astro';
+
 export interface Crumb {
   label: string;
   href?: string;
@@ -9,19 +11,6 @@ export interface Props {
 }
 
 const { items } = Astro.props;
-
-const siteUrl = import.meta.env.SITE || 'https://{{DOMAIN}}';
-
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'BreadcrumbList',
-  itemListElement: items.map((c, i) => ({
-    '@type': 'ListItem',
-    position: i + 1,
-    name: c.label,
-    ...(c.href ? { item: new URL(c.href, siteUrl).toString() } : {}),
-  })),
-};
 ---
 
 <nav aria-label="Breadcrumb" class="text-sm text-slate-500 mb-4">
@@ -39,4 +28,4 @@ const jsonLd = {
   </ol>
 </nav>
 
-<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />
+<BreadcrumbJsonLd items={items} />
