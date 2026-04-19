@@ -1,0 +1,69 @@
+---
+/**
+ * ProductFigure: imagen de producto con patrón visual unificado para reviews.
+ *
+ * Garantiza que todas las imágenes inline de producto tengan el mismo ritmo
+ * visual: centradas, capadas a 448 × 320 px (md) con object-contain, fondo
+ * blanco para productos fotografiados en estudio, border sutil y lazy-load.
+ *
+ * Uso en MDX:
+ *   <ProductFigure
+ *     src="https://m.media-amazon.com/images/I/XXXX._AC_SL1500_.jpg"
+ *     alt="Descripción accesible del producto o detalle"
+ *     caption="Texto opcional al pie"
+ *   />
+ *
+ * Variants de tamaño:
+ *   size="sm"  → 384 × 256 (más pequeño)
+ *   size="md"  → 448 × 320 (default, recomendado)
+ *   size="lg"  → 512 × 384 (un poco más grande)
+ */
+
+export interface Props {
+  src: string;
+  alt: string;
+  caption?: string;
+  size?: 'sm' | 'md' | 'lg';
+  /** Cambia el fondo del box. Útil si el producto no es foto estudio. */
+  bg?: 'white' | 'transparent';
+  /** Cambia loading a eager (útil solo si es imagen above-the-fold). */
+  eager?: boolean;
+}
+
+const {
+  src,
+  alt,
+  caption,
+  size = 'md',
+  bg = 'white',
+  eager = false,
+} = Astro.props;
+
+const figureSize: Record<NonNullable<Props['size']>, string> = {
+  sm: 'max-w-sm',
+  md: 'max-w-md',
+  lg: 'max-w-lg',
+};
+
+const imgMaxH: Record<NonNullable<Props['size']>, string> = {
+  sm: 'max-h-64',
+  md: 'max-h-80',
+  lg: 'max-h-96',
+};
+
+const bgClass = bg === 'white' ? 'bg-white' : 'bg-transparent';
+---
+
+<figure class={`not-prose my-10 mx-auto ${figureSize[size]}`}>
+  <img
+    src={src}
+    alt={alt}
+    loading={eager ? 'eager' : 'lazy'}
+    class={`max-w-full ${imgMaxH[size]} w-auto h-auto mx-auto object-contain rounded-xl border border-slate-200 dark:border-slate-700 ${bgClass} p-4`}
+  />
+  {caption && (
+    <figcaption class="text-sm text-slate-500 dark:text-slate-400 text-center mt-2">
+      {caption}
+    </figcaption>
+  )}
+</figure>

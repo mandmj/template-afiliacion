@@ -1,0 +1,68 @@
+---
+import { Icon } from 'astro-icon/components';
+
+export interface Props {
+  variant?: 'para-quien' | 'no-para-quien' | 'nota' | 'warning';
+  title?: string;
+}
+
+const { variant = 'nota', title } = Astro.props;
+
+const styles: Record<
+  NonNullable<Props['variant']>,
+  { border: string; bg: string; icon: string; iconColor: string; titleColor: string; defaultTitle: string }
+> = {
+  'para-quien': {
+    border: 'border-cyan-400 dark:border-cyan-500',
+    bg: 'bg-cyan-50 dark:bg-cyan-950/30',
+    icon: 'tabler:user-check',
+    iconColor: 'text-cyan-600 dark:text-cyan-400',
+    titleColor: 'text-cyan-900 dark:text-cyan-100',
+    defaultTitle: 'Este purificador encaja contigo si...',
+  },
+  'no-para-quien': {
+    border: 'border-rose-400 dark:border-rose-500',
+    bg: 'bg-rose-50 dark:bg-rose-950/30',
+    icon: 'tabler:user-x',
+    iconColor: 'text-rose-600 dark:text-rose-400',
+    titleColor: 'text-rose-900 dark:text-rose-100',
+    defaultTitle: 'Mejor mira otra opción si...',
+  },
+  nota: {
+    border: 'border-slate-300 dark:border-slate-600',
+    bg: 'bg-slate-50 dark:bg-slate-900',
+    icon: 'tabler:info-circle',
+    iconColor: 'text-slate-600 dark:text-slate-400',
+    titleColor: 'text-slate-900 dark:text-slate-100',
+    defaultTitle: 'Nota',
+  },
+  warning: {
+    border: 'border-amber-400 dark:border-amber-500',
+    bg: 'bg-amber-50 dark:bg-amber-950/30',
+    icon: 'tabler:alert-triangle',
+    iconColor: 'text-amber-600 dark:text-amber-400',
+    titleColor: 'text-amber-900 dark:text-amber-100',
+    defaultTitle: 'Importante',
+  },
+};
+
+const s = styles[variant];
+const finalTitle = title ?? s.defaultTitle;
+---
+
+<aside
+  class={`not-prose my-8 rounded-xl border-l-4 ${s.border} ${s.bg} p-5 sm:p-6`}
+  role="note"
+>
+  <div class="flex items-start gap-3">
+    <Icon name={s.icon} class={`shrink-0 mt-0.5 ${s.iconColor} w-6 h-6`} aria-hidden="true" />
+    <div class="flex-1 min-w-0">
+      <h3 class={`font-heading font-bold text-base sm:text-lg mb-3 ${s.titleColor}`}>
+        {finalTitle}
+      </h3>
+      <div class="text-slate-700 dark:text-slate-300 text-sm sm:text-base leading-relaxed space-y-2 [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:space-y-1.5 [&_strong]:font-semibold [&_strong]:text-slate-900 dark:[&_strong]:text-slate-100">
+        <slot />
+      </div>
+    </div>
+  </div>
+</aside>

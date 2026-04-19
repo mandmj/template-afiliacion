@@ -82,7 +82,75 @@ verdict: "Veredicto en 2-3 frases cerrando con recomendación por perfil."
 import AmazonButton from '~/components/afiliados/AmazonButton.astro';
 import ProsCons from '~/components/afiliados/ProsCons.astro';
 import Disclaimer from '~/components/afiliados/Disclaimer.astro';
+import ScoreBadge from '~/components/afiliados/ScoreBadge.astro';
+import Callout from '~/components/content/Callout.astro';
+import ProductFigure from '~/components/content/ProductFigure.astro';
 ```
+
+## Imágenes del producto (OBLIGATORIO en reviews)
+
+Cada review debe incluir **2-3 imágenes inline** del producto en secciones relevantes del análisis (diseño, detalle técnico, interfaz, producto en uso). Usa **siempre** `<ProductFigure>`, nunca HTML manual:
+
+```mdx
+<ProductFigure
+  src="https://m.media-amazon.com/images/I/XXX._AC_SL1500_.jpg"
+  alt="Descripción accesible del ángulo o detalle"
+  caption="Texto editorial al pie (opcional pero recomendado)"
+/>
+```
+
+**Reglas estrictas**:
+
+- La URL debe venir del campo `images[]` del JSON scrapeado. NO uses `image` singular (esa es la hero, se renderiza automáticamente en el template `src/pages/reviews/[slug].astro`).
+- Sufijo de resolución obligatorio: `_AC_SL1500_` (1500 px lado largo). Si el JSON tiene URLs con sufijos menores (`_AC_SX679_`, `_SS40_`), cámbialos antes de insertar.
+- `alt` descriptivo y concreto (no genérico). Malo: "imagen del producto". Bueno: "Panel táctil superior del {{modelo}} con botón de modo sueño".
+- `caption` opcional pero recomendado: añade contexto técnico que refuerza el cuerpo de la review, no repite el alt.
+
+Usa `size="md"` (default, 448 × 320 px) salvo motivo editorial claro. Evita `<img>` directo o `<figure>` manual en reviews.
+
+## Callouts visuales para "Para quién es / NO es"
+
+Reemplaza los bullets planos de "para quién es / no es" por `<Callout>` para mejorar scaneabilidad:
+
+```mdx
+<Callout variant="para-quien" title="El {{modelo}} encaja contigo si...">
+- bullet con negrita al inicio + frase explicativa
+- ...
+</Callout>
+
+<Callout variant="no-para-quien" title="Mejor mira otra opción si...">
+- ...
+</Callout>
+```
+
+Otras variants disponibles: `nota` (gris), `warning` (ámbar).
+
+## ScoreBadge en Veredicto
+
+La sección de veredicto **abre** con un bloque visual con `ScoreBadge size="lg"` + etiqueta cualitativa:
+
+```mdx
+## Veredicto
+
+<div class="not-prose flex items-center gap-4 my-6 rounded-xl border border-cyan-200 dark:border-cyan-800 bg-gradient-to-r from-cyan-50 to-transparent dark:from-cyan-950/40 p-5">
+  <ScoreBadge score={8.5} size="lg" />
+  <div>
+    <p class="text-xs uppercase tracking-wider text-cyan-700 dark:text-cyan-400 font-semibold">Nota editorial</p>
+    <p class="font-heading font-bold text-lg text-slate-900 dark:text-slate-100">{{Etiqueta cualitativa}}</p>
+    <p class="text-sm text-slate-600 dark:text-slate-400">{{Nota explicativa breve}}</p>
+  </div>
+</div>
+```
+
+Si la paleta del nicho no es cyan, sustituye las clases `cyan-*` por el color de acento del sitio (ej. `lime-*`, `sky-*`).
+
+Escala de etiquetas cualitativas por nota (/10):
+
+- 9.0+ → "Excelente, mejor compra global"
+- 8.5–8.9 → "Muy recomendable"
+- 8.0–8.4 → "Recomendable"
+- 7.5–7.9 → "Bueno con reservas"
+- &lt; 7.5 → "Válido en su rango"
 
 ## Reglas SEO
 

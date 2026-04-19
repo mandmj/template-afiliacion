@@ -116,6 +116,40 @@ function parseProduct(html, asin) {
     } catch {}
   }
 
+  // Galería adicional: thumbnails laterales + fallback colorImages del JSON embedido
+  const gallery = new Set();
+  if (image) gallery.add(image);
+
+  // Ruta 1: #altImages li img.a-image ... (thumbnails tamaño SS40/SS85)
+  $('#altImages img, li.imageThumbnail img, #imageBlock_feature_div img.a-image').each((_, el) => {
+    const src = $(el).attr('src') || $(el).attr('data-src');
+    if (!src) return;
+    // Thumbs vienen tipo ._SS40_. o ._SS85_. → subir a ._AC_SL1500_. (hi-res 1500px)
+    const hires = src
+      .replace(/\._SS\d+_\./, '._AC_SL1500_.')
+      .replace(/\._AC_US\d+_\./, '._AC_SL1500_.')
+      .replace(/\._AC_SX\d+_\./, '._AC_SL1500_.')
+      .replace(/\._CR\d+,\d+,\d+,\d+_\./, '.');
+    if (hires.startsWith('http')) gallery.add(hires);
+  });
+
+  // Ruta 2 (fallback): JSON embedido var colorImages = { initial: [{hiRes, large, thumb}...] }
+  if (gallery.size < 2) {
+    const scripts = $('script').toArray().map((s) => $(s).html() || '').join('\n');
+    const m = scripts.match(/"colorImages"\s*:\s*\{\s*"initial"\s*:\s*(\[[^\]]+\])/);
+    if (m) {
+      try {
+        const arr = JSON.parse(m[1]);
+        for (const item of arr) {
+          const url = item.hiRes || item.large || item.mainUrl;
+          if (url && typeof url === 'string' && url.startsWith('http')) gallery.add(url);
+        }
+      } catch {}
+    }
+  }
+
+  const images = [...gallery].slice(0, 5);
+
   const rating = parseRating(
     $('#acrPopover').attr('title') ||
       $('[data-hook="rating-out-of-text"]').text() ||
@@ -149,6 +183,7 @@ function parseProduct(html, asin) {
     rating,
     reviewsCount,
     image,
+    images,
     url,
     features: features.slice(0, 8),
     fetchedAt: new Date().toISOString(),

@@ -83,6 +83,7 @@ const productRef = z.object({
   rating: z.number().min(0).max(5).optional(),
   reviewsCount: z.number().optional(),
   image: z.string().optional(),
+  images: z.array(z.string()).optional(), // galería adicional desde Amazon altImages
   url: z.string().url(),
   features: z.array(z.string()).optional(),
   retailers: z.array(retailerOffer).optional(), // vendedores alternativos (Awin)
