@@ -89,7 +89,7 @@ import ProductFigure from '~/components/content/ProductFigure.astro';
 
 ## Imágenes del producto (OBLIGATORIO en reviews)
 
-Cada review debe incluir **2-3 imágenes inline** del producto en secciones relevantes del análisis (diseño, detalle técnico, interfaz, producto en uso). Usa **siempre** `<ProductFigure>`, nunca HTML manual:
+Cada review **debe incluir mínimo 2 `<ProductFigure>`**. No es opcional: si las omites, el `deploy-checker` las insertará automáticamente tras tu trabajo mediante `scripts/insert-review-images.mjs`, así que es preferible que las coloques tú con alt contextualizado y captions relevantes.
 
 ```mdx
 <ProductFigure
@@ -101,10 +101,14 @@ Cada review debe incluir **2-3 imágenes inline** del producto en secciones rele
 
 **Reglas estrictas**:
 
-- La URL debe venir del campo `images[]` del JSON scrapeado. NO uses `image` singular (esa es la hero, se renderiza automáticamente en el template `src/pages/reviews/[slug].astro`).
-- Sufijo de resolución obligatorio: `_AC_SL1500_` (1500 px lado largo). Si el JSON tiene URLs con sufijos menores (`_AC_SX679_`, `_SS40_`), cámbialos antes de insertar.
-- `alt` descriptivo y concreto (no genérico). Malo: "imagen del producto". Bueno: "Panel táctil superior del {{modelo}} con botón de modo sueño".
-- `caption` opcional pero recomendado: añade contexto técnico que refuerza el cuerpo de la review, no repite el alt.
+- Usa **`product.images[]`** del JSON (array de 5 URLs hi-res que captura `scripts/scrape-product.mjs`). NO uses `product.image` singular — esa es la hero y ya se renderiza automáticamente en `src/pages/reviews/[slug].astro`.
+- Salta siempre `images[0]` (es la misma que la hero).
+- La primera figura debe ir **justo después de `## Análisis detallado`** (rompe la pared de texto al comenzar el análisis). Usa `images[1]`.
+- La segunda figura debe ir **justo antes de `## Ventajas e inconvenientes`** o `## Veredicto`. Usa `images[2]` (o `images[3]` si quieres variedad).
+- Sufijo de resolución obligatorio: `_AC_SL1500_` (1500 px lado largo). El scraper ya normaliza a ese formato en `images[]`, pero si encuentras `_AC_SX679_` o `_SS40_` cámbialos antes de insertar.
+- `alt` descriptivo y concreto. Malo: "imagen del producto". Bueno: "Panel táctil superior del {{modelo}} con botón de modo sueño activo".
+- `caption` opcional pero recomendado: contexto técnico que refuerza el cuerpo de la review, no repite el alt.
+- Una tercera `<ProductFigure>` es opcional si el análisis es largo (&gt;1.800 palabras) o si el producto tiene un detalle técnico relevante que merezca primer plano.
 
 Usa `size="md"` (default, 448 × 320 px) salvo motivo editorial claro. Evita `<img>` directo o `<figure>` manual en reviews.
 
