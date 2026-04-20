@@ -174,6 +174,39 @@ El parser MDX de Astro 5 trata ciertos patrones como JSX y falla el build. Evita
 - **Menor/mayor que seguidos de dígito:** `<20 mm` o `>8 cm` en texto se interpretan como apertura de elemento JSX. Escribe `&lt;20 mm` y `&gt;8 cm` en su lugar.
 - **Guiones largos en texto:** usa `&mdash;` y `&ndash;` si el editor transforma los guiones automáticamente.
 
+## Props de componentes internos (no inventar nombres)
+
+Los componentes tienen firmas exactas. **No inventes nombres de props**. Si fallas aquí el build peta con `Cannot read properties of undefined`.
+
+- **`<FAQSection>`**: prop **`items`** (array de `{question, answer}`). **NO uses `faqs=`** (es el error típico del agente).
+  ```mdx
+  <FAQSection
+    title="Preguntas frecuentes"
+    items={[
+      { question: "¿Cuál es mejor?", answer: "Depende del uso." },
+      { question: "¿Vale la pena?", answer: "Sí si..." }
+    ]}
+  />
+  ```
+- **`<ProductFigure>`**: props `src`, `alt`, `caption?`, `size?` (`"sm"` | `"md"` | `"lg"`), `bg?`, `eager?`.
+- **`<Callout>`**: prop **`variant`** (`"para-quien"` | `"no-para-quien"` | `"nota"` | `"warning"`), no `type`. Title opcional vía `title`.
+- **`<HowToSteps>`**: props `title` (obligatoria), `steps` (array `{name, text, image?, url?}`), `description?`, `totalTime?`.
+- **`<ProsCons>`**: props `pros` (array string), `cons` (array string).
+- **`<ProductCard>`**: `asin`, `title`, `image`, `price`, `rating?`, `reviewsCount?`, `url`, `score?`, `highlighted?`, `features?`.
+- **`<AmazonButton>`**: `url` (completa con tag Amazon) **o** `asin` (genera URL automática), `label?`.
+- **`<ScoreBadge>`**: `score` (number), `size?` (`"sm"` | `"md"` | `"lg"`).
+
+## Rutas internas (URLs del sitio)
+
+El sitio está **en el idioma configurado** ({{IDIOMA}}, por defecto español). Convención de rutas públicas de este template:
+
+- `/reviews/<slug>` — reviews individuales.
+- `/comparativas/<slug>` — comparativas. **NO es `/comparisons/`** (error típico).
+- `/guias/<slug>` — guías. **NO es `/guides/`** (error típico).
+- `/categoria/<slug>` — páginas de categoría.
+
+Las carpetas en `src/content/` sí se llaman `reviews/`, `comparisons/`, `guides/` (convención Astro en inglés), pero las **URLs públicas** están localizadas. Nunca uses los nombres ingleses de las carpetas (`/comparisons/`, `/guides/`) en enlaces internos dentro del MDX.
+
 ## Salida
 
 Escribe el MDX en la ruta correcta (`src/content/reviews/<slug>.mdx` / `src/content/comparisons/<slug>.mdx` / `src/content/guides/<slug>.mdx`) y reporta al orquestador la ruta del archivo creado.
