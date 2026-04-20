@@ -41,7 +41,8 @@ for (const f of productFiles) {
 }
 
 function extractAsin(mdx) {
-  const m = mdx.match(/^\s*asin:\s*"?([A-Z0-9]{10})"?/m);
+  // Acepta comillas dobles, simples o sin comillas (todas válidas en YAML).
+  const m = mdx.match(/^\s*asin:\s*['"]?([A-Z0-9]{10})['"]?/m);
   return m ? m[1] : null;
 }
 
